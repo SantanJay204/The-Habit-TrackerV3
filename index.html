@@ -191,7 +191,7 @@
       border-collapse:collapse;
     }
 
-    /* keep borders minimal: only bottom lines + sticky separators */
+    /* minimalist grid lines */
     th, td{
       border-bottom:1px solid var(--border);
       padding:10px;
@@ -212,31 +212,22 @@
     }
     tr:last-child td{ border-bottom:none; }
 
-    /* Sticky first column (Habit) for both Weekly + Monthly */
+    /* sticky first column (Habit) */
     th:first-child, td:first-child{
       text-align:left;
       min-width:300px;
-
       position:sticky;
       left:0;
-
-      /* Keep it above the scrolling cells */
       z-index:2;
-
-      /* Solid background so text is readable */
       background:#0c0f19;
-
-      /* Minimal separator edge (one line only) */
       border-right:1px solid var(--border);
     }
-
-    /* Header cell in first column should be above everything */
     th:first-child{
       z-index:4;
       background:#0f1320;
     }
 
-    /* Optional: the last column (Progress) looks cleaner too */
+    /* subtle separator for Progress column */
     th:last-child, td:last-child{
       border-left:1px solid var(--border);
     }
@@ -316,7 +307,7 @@
       min-height:0;
     }
 
-    /* Visual styling shared by both <div class="card"> and <button class="card"> */
+    /* shared card visuals */
     .card{
       border:1px solid var(--border);
       background:#0c0f19;
@@ -330,12 +321,11 @@
       cursor:default;
     }
 
-    /* Button-only behavior */
+    /* button-only behavior */
     button.card{
       cursor:pointer;
       border:0;
       background:transparent;
-      /* padding intentionally NOT reset so .card padding applies */
       color:inherit;
       font:inherit;
     }
@@ -442,12 +432,10 @@
     }
     .item small{ color:var(--muted); font-weight:900; }
 
-    /* Neglected rows are <button class="item"> — normalize button defaults */
+    /* neglected rows are buttons */
     button.item{
       width:100%;
       cursor:pointer;
-
-      /* keep the same layout as .item */
       display:flex;
       justify-content:space-between;
       align-items:center;
@@ -527,12 +515,12 @@
       main{ grid-template-rows:auto auto; }
       .grid{ grid-template-columns:1fr; }
       .cards{ grid-template-columns:1fr; }
+      th:first-child, td:first-child{ min-width:240px; }
     }
 
     /* Expand-to-full system */
     body[data-expanded] { overflow: hidden; }
 
-    /* Dim backdrop in fullscreen (solid, no gradient) */
     body[data-expanded]::before{
       content:"";
       position:fixed;
@@ -543,7 +531,6 @@
     }
 
     .section { min-height: 0; }
-
     .section .section-body{
       min-height:0;
       overflow:auto;
@@ -551,7 +538,6 @@
       flex: 1 1 auto;
     }
 
-    /* Fullscreen state */
     body[data-expanded="ops"] #insightsSection,
     body[data-expanded="insights"] #opsSection {
       display: none;
@@ -568,12 +554,9 @@
       box-shadow: var(--shadow);
     }
 
-    /* Close visibility: CSS controls only */
     [data-close]{ display:none; }
     [data-close][hidden]{ display:none; }
     body[data-expanded] [data-close]{ display:inline-flex !important; }
-
-    /* Expand visibility */
     body[data-expanded] [data-expand] { display: none !important; }
   </style>
 </head>
