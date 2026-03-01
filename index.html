@@ -127,7 +127,8 @@
       display:grid;
       gap:14px;
       min-height:0;
-      grid-template-rows: 0.95fr 1.05fr;
+      grid-template-rows:auto auto;        /* tighter, content-driven */
+      align-content:start;                /* prevents “dead space” stacking */
     }
 
     .section{
@@ -185,12 +186,11 @@
     }
     table{
       width:100%;
-      min-width:840px;
+      min-width:920px; /* a bit wider so monthly doesn’t feel crushed */
       border-collapse:collapse;
     }
     th, td{
-      border-right:1px solid var(--border);
-      border-bottom:1px solid var(--border);
+      border-bottom:1px solid var(--border); /* minimalist: row separators only */
       padding:10px;
       text-align:center;
       font-size:.92rem;
@@ -200,7 +200,7 @@
     th{
       position:sticky;
       top:0;
-      z-index:2;
+      z-index:3;
       background:#0f1320;
       color:#dbe1ff;
       font-size:.78rem;
@@ -208,9 +208,18 @@
       text-transform:uppercase;
       font-weight:900;
     }
-    th:first-child, td:first-child{ text-align:left; }
-    th:last-child, td:last-child{ border-right:none; }
     tr:last-child td{ border-bottom:none; }
+
+    /* WIDER + sticky first column for long habit names (weekly + monthly) */
+    th:first-child, td:first-child{
+      text-align:left;
+      min-width:280px;
+      position:sticky;
+      left:0;
+      z-index:2;
+      background:#0c0f19;
+    }
+    th:first-child{ z-index:4; background:#0f1320; }
 
     .habit-name{
       font-weight:900;
@@ -298,27 +307,30 @@
     /* bottom analytics */
     .grid{
       display:grid;
-      gap:12px;
-      grid-template-columns: 1.2fr 0.8fr;
+      gap:10px;                         /* tighter */
+      grid-template-columns: 1.1fr 0.9fr;
       min-height:0;
       flex:1;
+      align-items:start;
     }
 
+    /* SHOW ALL HABITS: auto-fill grid + tighter cards */
     .cards{
       display:grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap:12px;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap:10px;
       min-height:0;
+      align-content:start;
     }
 
     .card{
       border:1px solid var(--border);
       background:#0c0f19;
       border-radius:16px;
-      padding:12px;
+      padding:10px;                     /* tighter */
       display:flex;
       flex-direction:column;
-      gap:10px;
+      gap:8px;                          /* tighter */
       min-height:0;
       text-align:left;
       cursor:default;
@@ -345,6 +357,9 @@
       font-weight:900;
       line-height:1.15;
       letter-spacing:.01em;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
     }
 
     .pill{
@@ -361,12 +376,12 @@
     .ring-wrap{
       display:flex;
       align-items:center;
-      justify-content:flex-start;
-      gap:12px;
+      justify-content:center;           /* fixes “long stretched” look */
+      min-height:0;
     }
     .ring{
-      width:92px;
-      height:92px;
+      width:84px;                       /* smaller = tighter */
+      height:84px;
       flex:0 0 auto;
     }
     .ring text{
@@ -625,6 +640,7 @@
     @media (max-width: 720px){
       .field-row{ grid-template-columns: 1fr; }
       .ovr-bars{ grid-template-columns: 1fr; }
+      .grid{ grid-template-columns:1fr; }
     }
 
     .field{ display:flex; flex-direction:column; gap:8px; }
@@ -685,12 +701,6 @@
     }
     .foot-note{ color:var(--muted); font-size:.82rem; font-weight:800; }
 
-    @media (max-width: 980px){
-      main{ grid-template-rows:auto auto; }
-      .grid{ grid-template-columns:1fr; }
-      .cards{ grid-template-columns:1fr; }
-    }
-
     /* Expand-to-full system */
     body[data-expanded] { overflow: hidden; }
     body[data-expanded]::before{
@@ -702,11 +712,11 @@
       z-index:9998;
     }
 
-    .section { min-height: 0; }
     .section .section-body{
       min-height:0;
       overflow:auto;
       padding-top:2px;
+      padding-bottom:2px;               /* reduces “blank tail” feel */
       flex: 1 1 auto;
     }
 
@@ -1066,7 +1076,7 @@
       return name;
     }
 
-    // ========= Coach (less generic, data-driven) =========
+    // ========= Coach (data-driven) =========
     function coachInsights(){
       const habits = appState.habits;
 
@@ -1115,7 +1125,6 @@
         return { h, weekDone, weekPct, monthDone, monthPct, since, streak, didToday, risk };
       }).sort((a,b)=> b.risk - a.risk);
 
-      // category balance (weekly)
       const cat = {};
       for(const c of CATEGORIES) cat[c] = { done:0, possible:0, habits:0 };
       for(const r of rows){
@@ -1139,7 +1148,6 @@
       const notDoneToday = rows.filter(r => !r.didToday).slice(0, 3);
       const worst = rows[0];
 
-      // headline
       let headline = "Keep the loop tight today.";
       if(worst){
         if(worst.since === Infinity){
@@ -1151,7 +1159,6 @@
         }
       }
 
-      // bullets (concrete)
       const bullets = [];
 
       if(notDoneToday.length){
@@ -1161,12 +1168,11 @@
       }
 
       if(missingCats.length){
-        bullets.push(`Balance gap: you have no habits in ${missingCats.slice(0,2).join(' & ')}. Add 1 small habit there to raise OVR.`);
+        bullets.push(`Balance gap: no habits in ${missingCats.slice(0,2).join(' & ')}. Add 1 small habit there to raise OVR.`);
       } else if(weakestOwned){
         bullets.push(`Weakest domain this week: ${weakestOwned.c} at ${weakestOwned.pct}%. Do one rep there today.`);
       }
 
-      // shrink rule tailored
       if(worst){
         if(worst.since >= 3 || worst.since === Infinity){
           bullets.push(`Shrink "${worst.h.name}" for 72 hours: minimum version only (2–5 minutes).`);
@@ -1175,13 +1181,11 @@
         }
       }
 
-      // streak protect
       const bestStreak = [...rows].sort((a,b)=> b.streak - a.streak)[0];
       if(bestStreak && bestStreak.streak >= 3){
-        bullets.push(`Streak to protect: "${bestStreak.h.name}" (${bestStreak.streak} days). Do it early to remove decision fatigue.`);
+        bullets.push(`Streak to protect: "${bestStreak.h.name}" (${bestStreak.streak} days). Do it early.`);
       }
 
-      // hard constraint (explicit)
       bullets.push(`Rule: 1) Never miss twice. 2) If you miss twice, the habit gets smaller immediately.`);
 
       return { headline, bullets };
@@ -1262,9 +1266,8 @@
       const wrap = document.createElement('div');
       wrap.style.display='grid';
       wrap.style.gap='14px';
-      wrap.style.height='100%';
       wrap.style.minHeight='0';
-      wrap.style.gridTemplateRows='0.95fr 1.05fr';
+      wrap.style.gridTemplateRows='auto auto'; /* tighter */
 
       const ops = document.createElement('section');
       ops.className='section';
@@ -1482,7 +1485,8 @@
         return { h, monthDone, monthPct, since };
       });
 
-      const cardsData = [...ranked].sort((a,b)=> b.monthPct - a.monthPct).slice(0, 6);
+      // ✅ show ALL habits in the donut grid (no slice)
+      const cardsData = [...ranked].sort((a,b)=> b.monthPct - a.monthPct);
 
       const neglected = [...ranked].sort((a,b)=>{
         const sa = a.since === Infinity ? 9999 : a.since;
@@ -1506,7 +1510,7 @@
 
         card.innerHTML = `
           <div class="card-top">
-            <div class="card-name">${esc(r.h.name)}</div>
+            <div class="card-name" title="${esc(r.h.name)}">${esc(r.h.name)}</div>
             <div class="pill">${esc(r.h.category)}</div>
           </div>
           <div class="ring-wrap">
@@ -1519,7 +1523,7 @@
       const right = document.createElement('div');
       right.style.display='flex';
       right.style.flexDirection='column';
-      right.style.gap='12px';
+      right.style.gap='10px';
       right.style.minHeight='0';
 
       const coachData = coachInsights();
@@ -1648,7 +1652,7 @@
             </div>
           </div>
 
-          <div style="display:flex; flex-direction:column; gap:12px; min-height:0;">
+          <div style="display:flex; flex-direction:column; gap:10px; min-height:0;">
             <div class="coach">
               <div class="coach-head">
                 <h3 class="coach-title">Coach</h3>
@@ -1701,15 +1705,7 @@
 
     // ========= OVR view =========
     function badgeSVG(tier, rankText){
-      // Solid emblem (shield + banner). No gradients. Higher tiers get wings + gem.
-      const cfg = {
-        accent:'#2563eb',
-        accent2:'#0ea5e9',
-        wing:false,
-        gem:false,
-        stars:0
-      };
-
+      const cfg = { accent:'#2563eb', accent2:'#0ea5e9', wing:false, gem:false, stars:0 };
       if(tier === 'Wood')    Object.assign(cfg,{accent:'#8b5a2b', accent2:'#6b3f1b'});
       if(tier === 'Steel')   Object.assign(cfg,{accent:'#94a3b8', accent2:'#64748b'});
       if(tier === 'Bronze')  Object.assign(cfg,{accent:'#b45309', accent2:'#92400e'});
@@ -1719,7 +1715,6 @@
       if(tier === 'Emerald') Object.assign(cfg,{accent:'#22c55e', accent2:'#16a34a', wing:true, gem:true});
       if(tier === 'Apex')    Object.assign(cfg,{accent:'#7c3aed', accent2:'#a855f7', wing:true, gem:true});
 
-      // division stars (Wood 3/2/1 etc)
       const parts = String(rankText).split(' ');
       if(parts.length === 2){
         const div = Number(parts[1]);
@@ -1731,9 +1726,7 @@
         <path d="M118 62c-16-18-34-24-46-20 14 14 18 34 14 46 14-10 22-26 32-26z" fill="${cfg.accent2}" opacity="0.95"/>
       ` : '';
 
-      const gem = cfg.gem ? `
-        <path d="M64 30l16 12-16 30-16-30z" fill="${cfg.accent}" opacity="0.98"/>
-      ` : '';
+      const gem = cfg.gem ? `<path d="M64 30l16 12-16 30-16-30z" fill="${cfg.accent}" opacity="0.98"/>` : '';
 
       const stars = cfg.stars ? `
         <g transform="translate(64 24)">
@@ -1747,25 +1740,15 @@
       return `
         <svg viewBox="0 0 128 128" aria-hidden="true">
           ${wing}
-
-          <!-- outer plate -->
           <path d="M64 10c18 0 34 6 46 12v44c0 26-16 46-46 54-30-8-46-28-46-54V22c12-6 28-12 46-12z"
                 fill="#0f1320" stroke="#22283a" stroke-width="2"/>
-
-          <!-- inner shield -->
           <path d="M64 20c14 0 26 4 34 8v36c0 20-12 35-34 41-22-6-34-21-34-41V28c8-4 20-8 34-8z"
                 fill="#0c0f19" stroke="#22283a" stroke-width="2"/>
-
-          <!-- accent ring -->
           <circle cx="64" cy="62" r="22" fill="none" stroke="${cfg.accent}" stroke-width="10"/>
-
-          <!-- banner -->
           <path d="M24 86h80l-10 12H34z" fill="${cfg.accent2}" opacity="0.95"/>
           <path d="M24 86h80l-10 12H34z" fill="none" stroke="#22283a" stroke-width="2"/>
-
           ${stars}
           ${gem}
-
           <text x="64" y="66" text-anchor="middle" font-size="12" font-weight="900" fill="#ffffff" style="letter-spacing:.10em;">
             ${esc(rankText)}
           </text>
@@ -2012,7 +1995,7 @@
       URL.revokeObjectURL(url);
     }
 
-    // ========= Rendering helpers =========
+    // ========= Helpers =========
     function bindDynamic(root){
       root.querySelectorAll('input[type="checkbox"]').forEach(box=>{
         box.addEventListener('change', (e)=>{
@@ -2047,7 +2030,6 @@
       });
 
       document.getElementById('addHabitBtn').addEventListener('click', openHabitModalAdd);
-
       document.getElementById('exportBtn').addEventListener('click', exportJson);
       document.getElementById('exportMonthCsvBtn').addEventListener('click', exportMonthCsv);
 
@@ -2125,17 +2107,14 @@
 
     // ========= Global handlers =========
     document.addEventListener('click', (e) => {
-      // If modal is open, don't run app click routing (modal handles itself)
       if(modalOpen) return;
 
-      // 1) EDIT HABIT MUST RUN BEFORE "interactive guard" (this fixes your broken Edit button)
       const edit = e.target.closest('[data-edit-habit]');
       if(edit){
         openHabitModalEdit(edit.getAttribute('data-edit-habit'));
         return;
       }
 
-      // direct actions
       const back = e.target.closest('[data-detail-close]');
       if(back){
         closeInsightsDetail();
@@ -2177,7 +2156,6 @@
         return;
       }
 
-      // 2) Guard: interactive elements inside openables should not trigger "open detail"
       if (e.target.closest('button.btn, input, label, a, select, textarea')) return;
 
       const open = e.target.closest('[data-open-habit]');
