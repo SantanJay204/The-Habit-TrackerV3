@@ -15,12 +15,9 @@
 
       --purple:#7c3aed;
       --blue:#2563eb;
-      --teal:#14b8a6;
       --green:#22c55e;
       --amber:#f59e0b;
       --red:#ef4444;
-      --pink:#ec4899;
-      --slate:#64748b;
 
       --radius:16px;
       --shadow: 0 18px 40px rgba(0,0,0,.45);
@@ -60,7 +57,11 @@
       flex-wrap:wrap;
     }
 
-    .title{ display:flex; flex-direction:column; gap:4px; }
+    .title{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
     h1{
       margin:0;
       font-size:1.05rem;
@@ -99,7 +100,10 @@
       cursor:pointer;
       letter-spacing:.02em;
     }
-    .tab.active{ background:var(--blue); color:#fff; }
+    .tab.active{
+      background:var(--blue);
+      color:#fff;
+    }
 
     .btn{
       border:1px solid var(--border);
@@ -115,20 +119,17 @@
       background:var(--purple);
       color:#fff;
     }
-    .btn.danger{
-      border-color:transparent;
-      background:var(--red);
-      color:#fff;
+    .btn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
     }
-    .btn:disabled{ opacity:.45; cursor:not-allowed; }
 
     main{
       padding:14px;
       display:grid;
       gap:14px;
       min-height:0;
-      grid-template-rows:auto auto;        /* tighter, content-driven */
-      align-content:start;                /* prevents “dead space” stacking */
+      grid-template-rows: 0.95fr 1.05fr;
     }
 
     .section{
@@ -186,16 +187,17 @@
     }
     table{
       width:100%;
-      min-width:920px; /* a bit wider so monthly doesn’t feel crushed */
+      min-width:840px;
       border-collapse:collapse;
     }
+
+    /* keep borders minimal: only bottom lines + sticky separators */
     th, td{
-      border-bottom:1px solid var(--border); /* minimalist: row separators only */
+      border-bottom:1px solid var(--border);
       padding:10px;
       text-align:center;
       font-size:.92rem;
       background:#0c0f19;
-      vertical-align:middle;
     }
     th{
       position:sticky;
@@ -210,47 +212,41 @@
     }
     tr:last-child td{ border-bottom:none; }
 
-    /* WIDER + sticky first column for long habit names (weekly + monthly) */
+    /* Sticky first column (Habit) for both Weekly + Monthly */
     th:first-child, td:first-child{
       text-align:left;
-      min-width:280px;
+      min-width:300px;
+
       position:sticky;
       left:0;
+
+      /* Keep it above the scrolling cells */
       z-index:2;
+
+      /* Solid background so text is readable */
       background:#0c0f19;
+
+      /* Minimal separator edge (one line only) */
+      border-right:1px solid var(--border);
     }
-    th:first-child{ z-index:4; background:#0f1320; }
+
+    /* Header cell in first column should be above everything */
+    th:first-child{
+      z-index:4;
+      background:#0f1320;
+    }
+
+    /* Optional: the last column (Progress) looks cleaner too */
+    th:last-child, td:last-child{
+      border-left:1px solid var(--border);
+    }
 
     .habit-name{
       font-weight:900;
       letter-spacing:.01em;
-      display:flex;
-      align-items:center;
-      gap:8px;
-      flex-wrap:wrap;
-    }
-    .habit-sub{
-      color:var(--muted);
-      font-weight:900;
-      font-size:.78rem;
     }
 
-    .icon-btn{
-      border:1px solid var(--border);
-      background:#0f1320;
-      color:#dbe1ff;
-      border-radius:10px;
-      padding:6px 10px;
-      font-weight:900;
-      cursor:pointer;
-      font-size:.78rem;
-      line-height:1;
-    }
-    .icon-btn:hover{ filter: brightness(1.05); }
-
-    /* Habit checkbox: uses per-habit color via --habitColor */
     input[type="checkbox"]{
-      --habitColor: var(--blue);
       appearance:none;
       -webkit-appearance:none;
       width:22px;
@@ -263,7 +259,7 @@
     }
     input[type="checkbox"]:checked{
       border-color:transparent;
-      background:var(--habitColor);
+      background:var(--blue);
     }
     input[type="checkbox"]:checked::after{
       content:'';
@@ -307,38 +303,39 @@
     /* bottom analytics */
     .grid{
       display:grid;
-      gap:10px;                         /* tighter */
-      grid-template-columns: 1.1fr 0.9fr;
+      gap:12px;
+      grid-template-columns: 1.2fr 0.8fr;
       min-height:0;
       flex:1;
-      align-items:start;
     }
 
-    /* SHOW ALL HABITS: auto-fill grid + tighter cards */
     .cards{
       display:grid;
-      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-      gap:10px;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap:12px;
       min-height:0;
-      align-content:start;
     }
 
+    /* Visual styling shared by both <div class="card"> and <button class="card"> */
     .card{
       border:1px solid var(--border);
       background:#0c0f19;
       border-radius:16px;
-      padding:10px;                     /* tighter */
+      padding:12px;
       display:flex;
       flex-direction:column;
-      gap:8px;                          /* tighter */
+      gap:10px;
       min-height:0;
       text-align:left;
       cursor:default;
     }
+
+    /* Button-only behavior */
     button.card{
       cursor:pointer;
       border:0;
       background:transparent;
+      /* padding intentionally NOT reset so .card padding applies */
       color:inherit;
       font:inherit;
     }
@@ -346,22 +343,22 @@
       outline:2px solid var(--blue);
       outline-offset:2px;
     }
+    button.card[disabled]{
+      cursor:default;
+      opacity:1;
+    }
 
     .card-top{
       display:flex;
       justify-content:space-between;
-      align-items:center;
+      align-items:flex-start;
       gap:10px;
     }
     .card-name{
       font-weight:900;
       line-height:1.15;
       letter-spacing:.01em;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      white-space:nowrap;
     }
-
     .pill{
       font-size:.75rem;
       font-weight:900;
@@ -376,12 +373,12 @@
     .ring-wrap{
       display:flex;
       align-items:center;
-      justify-content:center;           /* fixes “long stretched” look */
-      min-height:0;
+      justify-content:space-between;
+      gap:10px;
     }
     .ring{
-      width:84px;                       /* smaller = tighter */
-      height:84px;
+      width:92px;
+      height:92px;
       flex:0 0 auto;
     }
     .ring text{
@@ -390,6 +387,22 @@
       font-size:10px;
       letter-spacing:.06em;
     }
+
+    .stats{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      min-width:0;
+    }
+    .stat{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      color:var(--muted);
+      font-weight:900;
+      font-size:.85rem;
+    }
+    .stat b{ color:#e9ecff; }
 
     .list{
       border:1px solid var(--border);
@@ -429,13 +442,17 @@
     }
     .item small{ color:var(--muted); font-weight:900; }
 
+    /* Neglected rows are <button class="item"> — normalize button defaults */
     button.item{
       width:100%;
       cursor:pointer;
+
+      /* keep the same layout as .item */
       display:flex;
       justify-content:space-between;
       align-items:center;
       gap:10px;
+
       appearance:none;
       -webkit-appearance:none;
       border:0;
@@ -460,7 +477,6 @@
     .badge.bad{ background:var(--red); }
     .badge.warn{ background:var(--amber); }
     .badge.ok{ background:var(--green); }
-    .badge.new{ background:var(--slate); }
 
     .coach{
       display:flex;
@@ -497,200 +513,6 @@
     .coach-box ul{ margin:8px 0 0 18px; padding:0; }
     .coach-box li{ margin:6px 0; }
 
-    /* ======= OVR / Rank view ======= */
-    .ovr-wrap{
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-      min-height:0;
-    }
-    .ovr-hero{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      padding:18px;
-      border:1px solid var(--border);
-      background:#0c0f19;
-      border-radius:var(--radius);
-      min-height:0;
-    }
-    .ovr-badge{
-      width:170px;
-      height:170px;
-      border-radius:28px;
-      border:1px solid var(--border);
-      background:#0f1320;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .ovr-badge svg{ width:148px; height:148px; }
-    .ovr-rank{
-      font-weight:900;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      font-size:.95rem;
-    }
-    .ovr-meta{
-      color:var(--muted);
-      font-weight:900;
-      font-size:.85rem;
-      text-align:center;
-      line-height:1.35;
-    }
-    .ovr-bars{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap:12px;
-      width:100%;
-      max-width:820px;
-    }
-    .ovr-stat{
-      border:1px solid var(--border);
-      background:#0f1320;
-      border-radius:16px;
-      padding:12px;
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-    }
-    .ovr-stat span{
-      color:var(--muted);
-      font-weight:900;
-      font-size:.78rem;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-    }
-    .ovr-stat b{
-      font-weight:900;
-      font-size:1.25rem;
-      color:#e9ecff;
-    }
-
-    /* ======= Modal (Add/Edit Habit) ======= */
-    .modal{
-      position:fixed;
-      inset:0;
-      z-index:10050;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:14px;
-    }
-    .modal.show{ display:flex; }
-    .modal::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:#070912;
-      opacity:.88;
-    }
-    .modal-card{
-      position:relative;
-      width:min(720px, 96vw);
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      background:var(--panel2);
-      box-shadow:var(--shadow);
-      padding:14px;
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-      max-height:calc(100vh - 28px);
-    }
-    .modal-head{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .modal-title{
-      margin:0;
-      font-size:.95rem;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      font-weight:900;
-    }
-    .modal-sub{
-      margin:6px 0 0;
-      color:var(--muted);
-      font-weight:800;
-      font-size:.85rem;
-    }
-    .modal-body{
-      overflow:auto;
-      border:1px solid var(--border);
-      background:#0c0f19;
-      border-radius:16px;
-      padding:12px;
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-      min-height:0;
-    }
-
-    .field-row{
-      display:grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap:12px;
-    }
-    @media (max-width: 720px){
-      .field-row{ grid-template-columns: 1fr; }
-      .ovr-bars{ grid-template-columns: 1fr; }
-      .grid{ grid-template-columns:1fr; }
-    }
-
-    .field{ display:flex; flex-direction:column; gap:8px; }
-    .label{
-      color:var(--muted);
-      font-weight:900;
-      font-size:.78rem;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-    }
-    .input, .select{
-      border:1px solid var(--border);
-      background:#0f1320;
-      color:var(--text);
-      border-radius:14px;
-      padding:10px 12px;
-      font-weight:900;
-      outline:none;
-    }
-    .input:focus, .select:focus{
-      border-color:#2c3550;
-      outline:2px solid rgba(37,99,235,0.35);
-      outline-offset:2px;
-    }
-
-    .color-grid{
-      display:grid;
-      grid-template-columns: repeat(12, minmax(0,1fr));
-      gap:8px;
-    }
-    @media (max-width: 720px){
-      .color-grid{ grid-template-columns: repeat(8, minmax(0,1fr)); }
-    }
-    .swatch{
-      width:100%;
-      aspect-ratio:1/1;
-      border-radius:12px;
-      border:1px solid var(--border);
-      cursor:pointer;
-      background: #11162a;
-      position:relative;
-    }
-    .swatch[aria-selected="true"]::after{
-      content:"";
-      position:absolute;
-      inset:6px;
-      border:2px solid #fff;
-      border-radius:10px;
-    }
-
     footer{
       padding:14px;
       display:flex;
@@ -701,8 +523,16 @@
     }
     .foot-note{ color:var(--muted); font-size:.82rem; font-weight:800; }
 
+    @media (max-width: 980px){
+      main{ grid-template-rows:auto auto; }
+      .grid{ grid-template-columns:1fr; }
+      .cards{ grid-template-columns:1fr; }
+    }
+
     /* Expand-to-full system */
     body[data-expanded] { overflow: hidden; }
+
+    /* Dim backdrop in fullscreen (solid, no gradient) */
     body[data-expanded]::before{
       content:"";
       position:fixed;
@@ -712,21 +542,23 @@
       z-index:9998;
     }
 
+    .section { min-height: 0; }
+
     .section .section-body{
       min-height:0;
       overflow:auto;
       padding-top:2px;
-      padding-bottom:2px;               /* reduces “blank tail” feel */
       flex: 1 1 auto;
     }
 
+    /* Fullscreen state */
     body[data-expanded="ops"] #insightsSection,
-    body[data-expanded="insights"] #opsSection,
-    body[data-expanded="ovr"] #opsSection,
-    body[data-expanded="ovr"] #insightsSection { display: none; }
+    body[data-expanded="insights"] #opsSection {
+      display: none;
+    }
 
     body[data-expanded] #opsSection,
-    body[data-expanded] #insightsSection{
+    body[data-expanded] #insightsSection {
       position: fixed;
       inset: 14px;
       z-index: 9999;
@@ -736,19 +568,12 @@
       box-shadow: var(--shadow);
     }
 
-    body[data-expanded] #ovrSection{
-      position: fixed;
-      inset: 14px;
-      z-index: 9999;
-      border-radius: var(--radius);
-      background: var(--panel2);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      display:block !important;
-    }
-
+    /* Close visibility: CSS controls only */
     [data-close]{ display:none; }
+    [data-close][hidden]{ display:none; }
     body[data-expanded] [data-close]{ display:inline-flex !important; }
+
+    /* Expand visibility */
     body[data-expanded] [data-expand] { display: none !important; }
   </style>
 </head>
@@ -764,10 +589,8 @@
         <nav class="tabs" aria-label="View Switcher">
           <button class="tab active" data-view="weekly">Weekly</button>
           <button class="tab" data-view="monthly">Monthly</button>
-          <button class="tab" data-view="ovr">OVR</button>
         </nav>
-        <button class="btn" id="exportBtn" title="Export data as JSON">Export JSON</button>
-        <button class="btn" id="exportMonthCsvBtn" title="Export this month to CSV">Export Month CSV</button>
+        <button class="btn" id="exportBtn" title="Export data as JSON">Export</button>
         <button class="btn" id="askAiBtn" title="Requires backend (disabled for now)" disabled>Ask AI</button>
         <button class="btn primary" id="addHabitBtn">+ Habit</button>
       </div>
@@ -781,78 +604,12 @@
     </footer>
   </div>
 
-  <!-- Add/Edit Habit Modal -->
-  <div class="modal" id="habitModal" aria-hidden="true">
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="habitModalTitle">
-      <div class="modal-head">
-        <div>
-          <h2 class="modal-title" id="habitModalTitle">Habit</h2>
-          <p class="modal-sub" id="habitModalSub">Create or edit a habit.</p>
-        </div>
-        <div style="display:flex; gap:10px; align-items:center;">
-          <button class="btn" id="habitModalCancelBtn" type="button">Cancel</button>
-          <button class="btn primary" id="habitModalSaveBtn" type="button">Save</button>
-        </div>
-      </div>
-
-      <div class="modal-body">
-        <div class="field-row">
-          <div class="field">
-            <div class="label">Habit Name</div>
-            <input class="input" id="habitNameInput" placeholder="e.g., No vape, Gym, Journal" />
-          </div>
-
-          <div class="field">
-            <div class="label">Type</div>
-            <select class="select" id="habitCategorySelect"></select>
-          </div>
-        </div>
-
-        <div class="field">
-          <div class="label">Color</div>
-          <div class="color-grid" id="colorGrid"></div>
-        </div>
-
-        <div class="field" id="deleteRow" style="display:none;">
-          <div class="label">Danger Zone</div>
-          <div class="item" style="justify-content:space-between;">
-            <div>
-              <div style="font-weight:900">Delete habit</div>
-              <small>This removes the habit and its history.</small>
-            </div>
-            <button class="btn danger" id="habitDeleteBtn" type="button">Delete</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <script>
-    // ========= Config =========
-    const STORAGE_KEY = 'habit-tracker-solid-coach-v3';
-
-    const CATEGORIES = ['Body','Mind','Money','Craft','People','Order'];
-
-    const HABIT_COLORS = [
-      '#7c3aed', '#2563eb', '#14b8a6', '#22c55e', '#f59e0b', '#ef4444',
-      '#ec4899', '#06b6d4', '#10b981', '#a855f7', '#3b82f6', '#84cc16',
-      '#f97316', '#e11d48', '#0ea5e9', '#8b5cf6', '#f43f5e', '#16a34a',
-      '#d946ef', '#0d9488', '#ca8a04', '#dc2626', '#0891b2', '#4f46e5'
-    ];
-
-    function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
-
     // ========= State =========
+    const STORAGE_KEY = 'habit-tracker-solid-coach-v1';
     const appState = load() || { habits: [] };
     let activeView = 'weekly';
     let insightsDetailHabitId = null;
-
-    // modal state
-    let modalOpen = false;
-    let modalMode = 'add'; // 'add' | 'edit'
-    let modalHabitId = null;
-    let modalColorIndex = 0;
-    let modalCategory = 'Order';
 
     function load(){
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -860,12 +617,9 @@
       try{
         const parsed = JSON.parse(raw);
         if(!parsed || !Array.isArray(parsed.habits)) return null;
-
         parsed.habits = parsed.habits.map(h => ({
           id: String(h.id || crypto.randomUUID()),
           name: String(h.name || 'Untitled Habit'),
-          category: CATEGORIES.includes(h.category) ? h.category : 'Order',
-          colorIndex: Number.isFinite(h.colorIndex) ? (h.colorIndex % HABIT_COLORS.length) : 0,
           created: h.created || new Date().toISOString(),
           completions: Array.isArray(h.completions) ? h.completions : []
         }));
@@ -887,12 +641,6 @@
       const m = String(date.getMonth()+1).padStart(2,'0');
       const d = String(date.getDate()).padStart(2,'0');
       return `${y}-${m}-${d}`;
-    }
-
-    function yearMonth(date){
-      const y = date.getFullYear();
-      const m = String(date.getMonth()+1).padStart(2,'0');
-      return `${y}-${m}`;
     }
 
     function isoWeek(ref = new Date()){
@@ -932,11 +680,6 @@
       return dates.reduce((sum, d)=> sum + (done(habit, key(d)) ? 1 : 0), 0);
     }
 
-    function lastDoneKey(habit){
-      if(!habit.completions.length) return null;
-      return habit.completions[habit.completions.length - 1];
-    }
-
     function lastDoneDaysAgo(habit){
       if(!habit.completions.length) return Infinity;
       const last = habit.completions[habit.completions.length - 1];
@@ -957,238 +700,64 @@
       return streak;
     }
 
-    function habitColor(h){ return HABIT_COLORS[(h.colorIndex || 0) % HABIT_COLORS.length]; }
-
-    // ========= Rank / OVR (hard, well-rounded) =========
-    function monthAggHard(ref = new Date()){
-      const days = monthDays(ref);
-      const daysInMonth = days.length;
-      const habits = appState.habits;
-
-      const habitsCount = habits.length;
-      const possible = habitsCount * daysInMonth;
-
-      let doneTotal = 0;
-
-      const habitRates = habits.map(h => {
-        const doneCnt = countInRange(h, days);
-        doneTotal += doneCnt;
-        return habitsCount ? (doneCnt / daysInMonth) : 0;
-      });
-
-      const avgRate = habitRates.length
-        ? habitRates.reduce((a,b)=>a+b,0) / habitRates.length
-        : 0;
-
-      const cat = {};
-      for(const c of CATEGORIES) cat[c] = { done:0, possible:0, habits:0 };
-
-      for(const h of habits){
-        const c = CATEGORIES.includes(h.category) ? h.category : 'Order';
-        const doneCnt = countInRange(h, days);
-        cat[c].done += doneCnt;
-        cat[c].possible += daysInMonth;
-        cat[c].habits += 1;
-      }
-
-      const catRates = CATEGORIES.map(c => {
-        const p = cat[c].possible;
-        return p ? (cat[c].done / p) : 0;
-      });
-
-      const mean = catRates.reduce((a,b)=>a+b,0) / catRates.length;
-      const variance = catRates.reduce((s,x)=> s + (x-mean)*(x-mean), 0) / catRates.length;
-      const std = Math.sqrt(variance);
-
-      const balanceMult = clamp(1.10 - (std * 1.25), 0.60, 1.10);
-
-      const streakAvg = habits.length
-        ? habits.reduce((s,h)=> s + (Math.min(currentStreak(h), 7)/7), 0) / habits.length
-        : 0;
-      const streakBonus = Math.round(streakAvg * 12);
-
-      let penalty = 0;
-
-      for(const h of habits){
-        const since = lastDoneDaysAgo(h);
-        if(since === Infinity) penalty += 6;
-        else if(since >= 7) penalty += 4;
-        else if(since >= 4) penalty += 2;
-      }
-
-      for(const c of CATEGORIES){
-        const r = (cat[c].possible ? (cat[c].done / cat[c].possible) : 0);
-        if(cat[c].habits > 0 && r < 0.20) penalty += 6;
-        if(cat[c].habits === 0 && habits.length > 0) penalty += 6;
-      }
-
-      const top = Math.max(...catRates);
-      const bottom = Math.min(...catRates);
-      if(top > 0 && top > 2 * (bottom + 0.0001)) penalty += 6;
-
-      penalty = clamp(penalty, 0, 30);
-
-      const base = Math.round(avgRate * 75);
-      const ovr = clamp(Math.round(base * balanceMult - penalty + streakBonus), 0, 99);
-
-      const pct = possible ? Math.round((doneTotal / possible) * 100) : 0;
-
-      return {
-        ym: yearMonth(ref),
-        daysInMonth,
-        habitsCount,
-        possible,
-        doneTotal,
-        pct,
-        ovr,
-        balanceMult,
-        penalty,
-        streakBonus,
-        catRates,
-        catHabits: CATEGORIES.map(c => cat[c].habits)
-      };
-    }
-
-    function rankFromOVR(ovr){
-      const ladder = [
-        { name:'Wood',    min:  0, max: 19 },
-        { name:'Steel',   min: 20, max: 34 },
-        { name:'Bronze',  min: 35, max: 49 },
-        { name:'Silver',  min: 50, max: 64 },
-        { name:'Gold',    min: 65, max: 74 },
-        { name:'Platinum',min: 75, max: 84 },
-        { name:'Emerald', min: 85, max: 92 },
-        { name:'Apex',    min: 93, max: 99 }
-      ];
-
-      const tier = ladder.find(t => ovr >= t.min && ovr <= t.max) || ladder[0];
-      if(tier.name === 'Apex') return 'Apex';
-
-      const span = (tier.max - tier.min + 1);
-      const step = Math.ceil(span / 3);
-      const pos = ovr - tier.min;
-      const div = pos < step ? 3 : pos < step*2 ? 2 : 1;
-      return `${tier.name} ${div}`;
-    }
-
-    function rankTier(ovr){
-      const name = rankFromOVR(ovr).split(' ')[0];
-      return name;
-    }
-
-    // ========= Coach (data-driven) =========
+    // ========= Coach =========
     function coachInsights(){
-      const habits = appState.habits;
-
-      if(!habits.length){
-        return {
-          headline: "Add 1 habit. Keep it small.",
-          bullets: [
-            "Pick one habit that takes 5 minutes.",
-            "Do it at a fixed trigger (after brushing teeth, after dinner).",
-            "Win today. Scale later."
-          ]
-        };
-      }
-
       const now = new Date();
       const w = isoWeek(now);
       const m = monthDays(now);
       const daysInMonth = m.length;
-      const todayKey = key(now);
 
-      const rows = habits.map(h=>{
+      const ranked = appState.habits.map(h=>{
         const weekDone = countInRange(h, w);
         const monthDone = countInRange(h, m);
-        const weekPct = Math.round((weekDone/7)*100);
-        const monthPct = Math.round((monthDone/daysInMonth)*100);
         const since = lastDoneDaysAgo(h);
         const streak = currentStreak(h);
-        const didToday = done(h, todayKey);
+        const weekPct = Math.round((weekDone/7)*100);
+        const monthPct = Math.round((monthDone/daysInMonth)*100);
 
-        const recencyRisk =
-          since === Infinity ? 60 :
-          since >= 7 ? 50 :
-          since >= 4 ? 35 :
-          since >= 3 ? 25 :
-          since >= 1 ? 10 : 0;
+        const risk =
+          (since === Infinity ? 50 : Math.min(50, since*6)) +
+          (weekPct < 30 ? 20 : weekPct < 60 ? 10 : 0) +
+          (streak >= 3 ? -10 : 0);
 
-        const consistencyRisk =
-          weekPct < 15 ? 25 :
-          weekPct < 35 ? 18 :
-          weekPct < 55 ? 10 : 0;
-
-        const streakProtect = streak >= 4 ? -10 : streak >= 2 ? -5 : 0;
-
-        const risk = recencyRisk + consistencyRisk + streakProtect;
-
-        return { h, weekDone, weekPct, monthDone, monthPct, since, streak, didToday, risk };
+        return { h, weekDone, weekPct, monthDone, monthPct, since, streak, risk };
       }).sort((a,b)=> b.risk - a.risk);
 
-      const cat = {};
-      for(const c of CATEGORIES) cat[c] = { done:0, possible:0, habits:0 };
-      for(const r of rows){
-        const c = CATEGORIES.includes(r.h.category) ? r.h.category : 'Order';
-        cat[c].done += r.weekDone;
-        cat[c].possible += 7;
-        cat[c].habits += 1;
+      const topNeglected = ranked.slice(0, Math.min(3, ranked.length));
+      const topWinners = [...ranked].sort((a,b)=> b.weekPct - a.weekPct).slice(0, Math.min(2, ranked.length));
+
+      const todayKey = key(new Date());
+      const notDoneToday = ranked.filter(r => !done(r.h, todayKey)).slice(0, 3);
+
+      if(!appState.habits.length){
+        return {
+          headline: "Add 1 habit. Keep it small.",
+          bullets: ["Start with one habit you can do in 5 minutes.", "Consistency beats intensity."]
+        };
       }
 
-      const catRates = CATEGORIES.map(c => ({
-        c,
-        habits: cat[c].habits,
-        pct: cat[c].possible ? Math.round((cat[c].done / cat[c].possible)*100) : 0
-      }));
-
-      const missingCats = catRates.filter(x => x.habits === 0).map(x=>x.c);
-      const weakestOwned = catRates
-        .filter(x => x.habits > 0)
-        .sort((a,b)=> a.pct - b.pct)[0];
-
-      const notDoneToday = rows.filter(r => !r.didToday).slice(0, 3);
-      const worst = rows[0];
-
-      let headline = "Keep the loop tight today.";
-      if(worst){
-        if(worst.since === Infinity){
-          headline = `Start "${worst.h.name}" today. It has zero reps.`;
-        } else if(worst.since >= 4){
-          headline = `Fix "${worst.h.name}" today (${worst.since} days since last).`;
-        } else if(worst.weekPct < 35){
-          headline = `Stabilize "${worst.h.name}" (week at ${worst.weekPct}%).`;
-        }
+      const messages = [];
+      const worst = topNeglected[0];
+      if(worst && worst.since >= 3){
+        messages.push(`Priority risk: "${worst.h.name}" is slipping (${worst.since === Infinity ? 'never done' : worst.since + ' days since last'}).`);
+      } else {
+        messages.push(`You’re not in trouble. Keep the loop tight today.`);
       }
 
       const bullets = [];
 
       if(notDoneToday.length){
-        bullets.push(`Today priorities: ${notDoneToday.map(x=>`"${x.h.name}"`).join(', ')}.`);
-      } else {
-        bullets.push("Today priorities: you’ve already hit everything you track for today.");
+        bullets.push(`Do these today (pick 1–3): ${notDoneToday.map(x=>`"${x.h.name}"`).join(', ')}.`);
       }
-
-      if(missingCats.length){
-        bullets.push(`Balance gap: no habits in ${missingCats.slice(0,2).join(' & ')}. Add 1 small habit there to raise OVR.`);
-      } else if(weakestOwned){
-        bullets.push(`Weakest domain this week: ${weakestOwned.c} at ${weakestOwned.pct}%. Do one rep there today.`);
+      if(topNeglected.length){
+        bullets.push(`Neglect list: ${topNeglected.map(x=>`"${x.h.name}"`).join(', ')}.`);
       }
-
-      if(worst){
-        if(worst.since >= 3 || worst.since === Infinity){
-          bullets.push(`Shrink "${worst.h.name}" for 72 hours: minimum version only (2–5 minutes).`);
-        } else {
-          bullets.push(`Protect momentum: don’t skip 2 days in a row on any habit.`);
-        }
+      if(topWinners.length){
+        bullets.push(`What’s working: ${topWinners.map(x=>`"${x.h.name}"`).join(', ')}. Protect that momentum.`);
       }
+      bullets.push(`Rule: if a habit is missed 2+ days, shrink it until it’s impossible to fail.`);
 
-      const bestStreak = [...rows].sort((a,b)=> b.streak - a.streak)[0];
-      if(bestStreak && bestStreak.streak >= 3){
-        bullets.push(`Streak to protect: "${bestStreak.h.name}" (${bestStreak.streak} days). Do it early.`);
-      }
-
-      bullets.push(`Rule: 1) Never miss twice. 2) If you miss twice, the habit gets smaller immediately.`);
-
-      return { headline, bullets };
+      return { headline: messages[0], bullets };
     }
 
     // ========= Rendering =========
@@ -1230,35 +799,18 @@
       `;
     }
 
-    function performanceColor(pct){
-      if(pct < 25) return 'var(--red)';
-      if(pct < 50) return 'var(--amber)';
-      if(pct < 75) return 'var(--teal)';
-      return 'var(--green)';
-    }
-
-    function neglectBadge(h){
-      const since = lastDoneDaysAgo(h);
-      const last = lastDoneKey(h);
-
-      if(since === Infinity) return { cls:'new', label:'Never', sub:`No completions yet` };
-      if(since === 0) return { cls:'ok', label:'Today', sub:`Last done: ${last}` };
-      if(since <= 2) return { cls:'ok', label:`${since}d`, sub:`${since} day(s) since last • ${last}` };
-      if(since <= 6) return { cls:'warn', label:`${since}d`, sub:`${since} day(s) since last • ${last}` };
-      return { cls:'bad', label:`${since}d`, sub:`${since} day(s) since last • ${last}` };
+    function badge(days){
+      if(days === Infinity) return {cls:'bad', label:'Never'};
+      if(days >= 7) return {cls:'bad', label:`${days}d`};
+      if(days >= 3) return {cls:'warn', label:`${days}d`};
+      return {cls:'ok', label:`${days}d`};
     }
 
     function render(){
       setMeta();
       const shell = document.getElementById('mainShell');
       shell.innerHTML = '';
-
-      if(activeView === 'ovr'){
-        shell.appendChild(renderOVR());
-      } else {
-        shell.appendChild(renderDashboard());
-      }
-
+      shell.appendChild(renderDashboard());
       bindDynamic(shell);
     }
 
@@ -1266,8 +818,9 @@
       const wrap = document.createElement('div');
       wrap.style.display='grid';
       wrap.style.gap='14px';
+      wrap.style.height='100%';
       wrap.style.minHeight='0';
-      wrap.style.gridTemplateRows='auto auto'; /* tighter */
+      wrap.style.gridTemplateRows='0.95fr 1.05fr';
 
       const ops = document.createElement('section');
       ops.className='section';
@@ -1349,28 +902,18 @@
           const tr = document.createElement('tr');
           const doneCount = countInRange(h, weekDates);
           const pct = Math.round((doneCount/7)*100);
-          const c = habitColor(h);
 
-          let row = `
-            <td>
-              <div class="habit-name">
-                ${esc(h.name)}
-                <span class="habit-sub">• ${esc(h.category)}</span>
-                <button class="icon-btn" type="button" data-edit-habit="${h.id}" aria-label="Edit habit ${esc(h.name)}">Edit</button>
-              </div>
-            </td>
-          `;
-
+          let row = `<td><div class="habit-name">${esc(h.name)}</div></td>`;
           weekDates.forEach(d=>{
             const dk = key(d);
             const checked = done(h, dk) ? 'checked' : '';
-            row += `<td><input type="checkbox" style="--habitColor:${c}" data-habit-id="${h.id}" data-date="${dk}" ${checked} aria-label="${esc(h.name)} ${dk}"></td>`;
+            row += `<td><input type="checkbox" data-habit-id="${h.id}" data-date="${dk}" ${checked} aria-label="${esc(h.name)} ${dk}"></td>`;
           });
 
           row += `
             <td>
               <div class="progress">
-                <div class="bar"><div class="fill" style="width:${pct}%; background:${c}"></div></div>
+                <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
                 <div class="pct">${doneCount}/7 • ${pct}%</div>
               </div>
             </td>`;
@@ -1393,30 +936,20 @@
           const tr = document.createElement('tr');
           const doneCount = countInRange(h, md);
           const pct = Math.round((doneCount/daysInMonth)*100);
-          const c = habitColor(h);
 
-          let row = `
-            <td>
-              <div class="habit-name">
-                ${esc(h.name)}
-                <span class="habit-sub">• ${esc(h.category)}</span>
-                <button class="icon-btn" type="button" data-edit-habit="${h.id}" aria-label="Edit habit ${esc(h.name)}">Edit</button>
-              </div>
-            </td>
-          `;
-
+          let row = `<td><div class="habit-name">${esc(h.name)}</div></td>`;
           for(let day=1; day<=31; day++){
             const date = md[day-1];
             if(!date){ row += `<td style="opacity:.35">—</td>`; continue; }
             const dk = key(date);
             const checked = done(h, dk) ? 'checked' : '';
-            row += `<td><input type="checkbox" style="--habitColor:${c}" data-habit-id="${h.id}" data-date="${dk}" ${checked} aria-label="${esc(h.name)} ${dk}"></td>`;
+            row += `<td><input type="checkbox" data-habit-id="${h.id}" data-date="${dk}" ${checked} aria-label="${esc(h.name)} ${dk}"></td>`;
           }
 
           row += `
             <td>
               <div class="progress">
-                <div class="bar"><div class="fill" style="width:${pct}%; background:${c}"></div></div>
+                <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
                 <div class="pct">${doneCount}/${daysInMonth} • ${pct}%</div>
               </div>
             </td>`;
@@ -1436,20 +969,10 @@
     function renderInsightsHeader(){
       const head = document.createElement('div');
       head.className = 'section-head';
-
-      const agg = monthAggHard(new Date());
-      const rank = rankFromOVR(agg.ovr);
-
       head.innerHTML = `
         <div>
           <h2 class="section-title">Insights</h2>
-          <p class="section-sub">
-            Rank: <span style="color:#e9ecff; font-weight:900">${esc(rank)}</span>
-            <span style="color:var(--muted); font-weight:900"> • </span>
-            OVR: <span style="color:#e9ecff; font-weight:900">${agg.ovr}</span>
-            <span style="color:var(--muted); font-weight:900"> • </span>
-            Month completion: <span style="color:#e9ecff; font-weight:900">${agg.pct}%</span>
-          </p>
+          <p class="section-sub">Real-time signals based on what you’re actually doing.</p>
         </div>
         <div style="display:flex; gap:10px; align-items:center;">
           <button class="btn" data-expand="insights" aria-label="Expand Insights">Expand</button>
@@ -1475,32 +998,30 @@
       }
 
       const now = new Date();
+      const w = isoWeek(now);
       const m = monthDays(now);
       const daysInMonth = m.length;
 
-      const ranked = appState.habits.map((h)=>{
+      const ranked = appState.habits.map((h, idx)=>{
+        const weekDone = countInRange(h, w);
         const monthDone = countInRange(h, m);
+        const weekPct = Math.round((weekDone/7)*100);
         const monthPct = Math.round((monthDone/daysInMonth)*100);
         const since = lastDoneDaysAgo(h);
-        return { h, monthDone, monthPct, since };
+        const streak = currentStreak(h);
+        return { h, weekDone, weekPct, monthDone, monthPct, since, streak, idx };
       });
 
-      // ✅ show ALL habits in the donut grid (no slice)
-      const cardsData = [...ranked].sort((a,b)=> b.monthPct - a.monthPct);
-
-      const neglected = [...ranked].sort((a,b)=>{
-        const sa = a.since === Infinity ? 9999 : a.since;
-        const sb = b.since === Infinity ? 9999 : b.since;
-        return sb - sa;
-      }).slice(0, 10);
+      const cardsData = [...ranked].sort((a,b)=> b.monthPct - a.monthPct).slice(0, 6);
+      const neglected = [...ranked].sort((a,b)=> (b.since - a.since)).slice(0, 10);
 
       const grid = document.createElement('div');
       grid.className='grid';
 
       const cards = document.createElement('div');
       cards.className='cards';
-      cardsData.forEach((r)=>{
-        const ringColor = performanceColor(r.monthPct);
+      cardsData.forEach((r, i)=>{
+        const color = (i % 2 === 0) ? 'var(--purple)' : 'var(--blue)';
 
         const card = document.createElement('button');
         card.type = 'button';
@@ -1510,11 +1031,16 @@
 
         card.innerHTML = `
           <div class="card-top">
-            <div class="card-name" title="${esc(r.h.name)}">${esc(r.h.name)}</div>
-            <div class="pill">${esc(r.h.category)}</div>
+            <div class="card-name">${esc(r.h.name)}</div>
+            <div class="pill">Month • ${r.monthDone}/${daysInMonth}</div>
           </div>
           <div class="ring-wrap">
-            ${ringSVG(r.monthPct, ringColor)}
+            ${ringSVG(r.monthPct, color)}
+            <div class="stats">
+              <div class="stat"><span>Week</span><b>${r.weekDone}/7 (${r.weekPct}%)</b></div>
+              <div class="stat"><span>Streak</span><b>${r.streak} day(s)</b></div>
+              <div class="stat"><span>Last</span><b>${r.since === Infinity ? 'Never' : r.since + 'd ago'}</b></div>
+            </div>
           </div>
         `;
         cards.appendChild(card);
@@ -1523,7 +1049,7 @@
       const right = document.createElement('div');
       right.style.display='flex';
       right.style.flexDirection='column';
-      right.style.gap='10px';
+      right.style.gap='12px';
       right.style.minHeight='0';
 
       const coachData = coachInsights();
@@ -1532,11 +1058,11 @@
       coach.innerHTML = `
         <div class="coach-head">
           <h3 class="coach-title">Coach</h3>
-          <span class="pill">Local</span>
+          <span class="pill">Auto-analysis</span>
         </div>
         <div class="coach-box">
           <div style="font-weight:900">${esc(coachData.headline)}</div>
-          <ul>${coachData.bullets.slice(0,5).map(b=>`<li>${esc(b)}</li>`).join('')}</ul>
+          <ul>${coachData.bullets.map(b=>`<li>${esc(b)}</li>`).join('')}</ul>
         </div>
       `;
 
@@ -1546,7 +1072,7 @@
       const items = list.querySelector('.items');
 
       neglected.forEach(r=>{
-        const b = neglectBadge(r.h);
+        const b = badge(r.since);
         const item = document.createElement('button');
         item.type = 'button';
         item.className='item';
@@ -1555,9 +1081,9 @@
         item.innerHTML = `
           <div>
             <div style="font-weight:900">${esc(r.h.name)}</div>
-            <small>${esc(b.sub)}</small>
+            <small>Month: ${r.monthPct}% • Week: ${r.weekPct}%</small>
           </div>
-          <div class="badge ${b.cls}">${esc(b.label)}</div>
+          <div class="badge ${b.cls}">${b.label}</div>
         `;
         items.appendChild(item);
       });
@@ -1583,11 +1109,16 @@
       }
 
       const now = new Date();
+      const w = isoWeek(now);
       const m = monthDays(now);
       const daysInMonth = m.length;
 
+      const weekDone = countInRange(h, w);
       const monthDone = countInRange(h, m);
+      const weekPct = Math.round((weekDone/7)*100);
       const monthPct = Math.round((monthDone/daysInMonth)*100);
+      const since = lastDoneDaysAgo(h);
+      const streak = currentStreak(h);
 
       const today = new Date(); today.setHours(0,0,0,0);
       const last14 = Array.from({length:14}, (_,i)=>{
@@ -1596,20 +1127,11 @@
         return d;
       });
 
-      const c = habitColor(h);
-      const ringColor = performanceColor(monthPct);
-      const since = lastDoneDaysAgo(h);
-      const lastKey = lastDoneKey(h);
-
       container.innerHTML = `
         <div class="section-head">
           <div>
             <h2 class="section-title">${esc(h.name)} • Detail</h2>
-            <p class="section-sub">
-              Category: <span style="color:#e9ecff; font-weight:900">${esc(h.category)}</span>
-              <span style="color:var(--muted); font-weight:900"> • </span>
-              Last: <span style="color:#e9ecff; font-weight:900">${since === Infinity ? 'Never' : `${since} day(s) ago (${lastKey})`}</span>
-            </p>
+            <p class="section-sub">Deep view of consistency and recency.</p>
           </div>
           <div style="display:flex; gap:10px; align-items:center;">
             <button class="btn" data-detail-close type="button">Back</button>
@@ -1621,14 +1143,16 @@
           <div class="cards" style="grid-template-columns: repeat(2, minmax(0,1fr));">
             <div class="card">
               <div class="card-top">
-                <div class="card-name">Month</div>
-                <div class="pill">${monthPct}%</div>
+                <div class="card-name">Monthly</div>
+                <div class="pill">${monthDone}/${daysInMonth}</div>
               </div>
               <div class="ring-wrap">
-                ${ringSVG(monthPct, ringColor)}
-              </div>
-              <div style="color:var(--muted); font-weight:900; font-size:.85rem;">
-                ${monthDone}/${daysInMonth} days completed
+                ${ringSVG(monthPct, 'var(--purple)')}
+                <div class="stats">
+                  <div class="stat"><span>Week</span><b>${weekDone}/7 (${weekPct}%)</b></div>
+                  <div class="stat"><span>Streak</span><b>${streak} day(s)</b></div>
+                  <div class="stat"><span>Last</span><b>${since === Infinity ? 'Never' : since + 'd ago'}</b></div>
+                </div>
               </div>
             </div>
 
@@ -1644,7 +1168,7 @@
                   return `
                     <label style="display:flex; flex-direction:column; gap:6px; align-items:center; padding:8px; border:1px solid var(--border); border-radius:12px; background:#0f1320;">
                       <div style="font-weight:900; font-size:.78rem; color:var(--muted)">${d.getMonth()+1}/${d.getDate()}</div>
-                      <input type="checkbox" style="--habitColor:${c}" data-habit-id="${h.id}" data-date="${dk}" ${checked} aria-label="${esc(h.name)} ${dk}">
+                      <input type="checkbox" data-habit-id="${h.id}" data-date="${dk}" ${checked} aria-label="${esc(h.name)} ${dk}">
                     </label>
                   `;
                 }).join('')}
@@ -1652,20 +1176,20 @@
             </div>
           </div>
 
-          <div style="display:flex; flex-direction:column; gap:10px; min-height:0;">
+          <div style="display:flex; flex-direction:column; gap:12px; min-height:0;">
             <div class="coach">
               <div class="coach-head">
                 <h3 class="coach-title">Coach</h3>
-                <span class="pill">Single</span>
+                <span class="pill">Single-habit</span>
               </div>
               <div class="coach-box">
                 <div style="font-weight:900">
-                  ${since >= 3 ? `This habit is sliding (${since === Infinity ? 'never done' : since + ' day(s) since last'}).` : `This habit is stable. Keep the loop tight.`}
+                  ${since >= 3 ? `This habit is sliding (${since === Infinity ? 'never done' : since + ' days since last'}).` : `This habit is stable. Keep the loop tight.`}
                 </div>
                 <ul>
                   <li>Minimum viable version: reduce it until you can’t fail.</li>
                   <li>Lock a trigger: attach it to a fixed daily event.</li>
-                  <li>Don’t make up misses. Restart today.</li>
+                  <li>Don’t “make up” misses. Just restart today.</li>
                 </ul>
               </div>
             </div>
@@ -1673,13 +1197,6 @@
             <div class="list" style="min-height:0;">
               <h3>Quick Actions</h3>
               <div class="items">
-                <div class="item">
-                  <div>
-                    <div style="font-weight:900">Edit habit</div>
-                    <small>Rename, category, color, delete</small>
-                  </div>
-                  <button class="btn" type="button" data-edit-habit="${h.id}">Edit</button>
-                </div>
                 <div class="item">
                   <div>
                     <div style="font-weight:900">Mark today complete</div>
@@ -1703,299 +1220,6 @@
       return container;
     }
 
-    // ========= OVR view =========
-    function badgeSVG(tier, rankText){
-      const cfg = { accent:'#2563eb', accent2:'#0ea5e9', wing:false, gem:false, stars:0 };
-      if(tier === 'Wood')    Object.assign(cfg,{accent:'#8b5a2b', accent2:'#6b3f1b'});
-      if(tier === 'Steel')   Object.assign(cfg,{accent:'#94a3b8', accent2:'#64748b'});
-      if(tier === 'Bronze')  Object.assign(cfg,{accent:'#b45309', accent2:'#92400e'});
-      if(tier === 'Silver')  Object.assign(cfg,{accent:'#cbd5e1', accent2:'#94a3b8'});
-      if(tier === 'Gold')    Object.assign(cfg,{accent:'#f59e0b', accent2:'#ca8a04'});
-      if(tier === 'Platinum')Object.assign(cfg,{accent:'#60a5fa', accent2:'#2563eb'});
-      if(tier === 'Emerald') Object.assign(cfg,{accent:'#22c55e', accent2:'#16a34a', wing:true, gem:true});
-      if(tier === 'Apex')    Object.assign(cfg,{accent:'#7c3aed', accent2:'#a855f7', wing:true, gem:true});
-
-      const parts = String(rankText).split(' ');
-      if(parts.length === 2){
-        const div = Number(parts[1]);
-        cfg.stars = (div === 1 ? 3 : div === 2 ? 2 : 1);
-      }
-
-      const wing = cfg.wing ? `
-        <path d="M10 62c16-18 34-24 46-20-14 14-18 34-14 46-14-10-22-26-32-26z" fill="${cfg.accent2}" opacity="0.95"/>
-        <path d="M118 62c-16-18-34-24-46-20 14 14 18 34 14 46 14-10 22-26 32-26z" fill="${cfg.accent2}" opacity="0.95"/>
-      ` : '';
-
-      const gem = cfg.gem ? `<path d="M64 30l16 12-16 30-16-30z" fill="${cfg.accent}" opacity="0.98"/>` : '';
-
-      const stars = cfg.stars ? `
-        <g transform="translate(64 24)">
-          ${Array.from({length:cfg.stars}, (_,i)=>{
-            const x = (i - (cfg.stars-1)/2) * 12;
-            return `<path d="M${x} 0l2.2 5.8 6.2.2-4.9 3.8 1.7 6-5.2-3.3-5.2 3.3 1.7-6-4.9-3.8 6.2-.2z" fill="${cfg.accent}" opacity="0.95"/>`;
-          }).join('')}
-        </g>
-      ` : '';
-
-      return `
-        <svg viewBox="0 0 128 128" aria-hidden="true">
-          ${wing}
-          <path d="M64 10c18 0 34 6 46 12v44c0 26-16 46-46 54-30-8-46-28-46-54V22c12-6 28-12 46-12z"
-                fill="#0f1320" stroke="#22283a" stroke-width="2"/>
-          <path d="M64 20c14 0 26 4 34 8v36c0 20-12 35-34 41-22-6-34-21-34-41V28c8-4 20-8 34-8z"
-                fill="#0c0f19" stroke="#22283a" stroke-width="2"/>
-          <circle cx="64" cy="62" r="22" fill="none" stroke="${cfg.accent}" stroke-width="10"/>
-          <path d="M24 86h80l-10 12H34z" fill="${cfg.accent2}" opacity="0.95"/>
-          <path d="M24 86h80l-10 12H34z" fill="none" stroke="#22283a" stroke-width="2"/>
-          ${stars}
-          ${gem}
-          <text x="64" y="66" text-anchor="middle" font-size="12" font-weight="900" fill="#ffffff" style="letter-spacing:.10em;">
-            ${esc(rankText)}
-          </text>
-        </svg>
-      `;
-    }
-
-    function renderOVR(){
-      const wrap = document.createElement('section');
-      wrap.className='section';
-      wrap.id='ovrSection';
-
-      const agg = monthAggHard(new Date());
-      const rank = rankFromOVR(agg.ovr);
-      const tier = rankTier(agg.ovr);
-
-      const head = document.createElement('div');
-      head.className='section-head';
-      head.innerHTML = `
-        <div>
-          <h2 class="section-title">OVR</h2>
-          <p class="section-sub">
-            Month: <span style="color:#e9ecff; font-weight:900">${agg.ym}</span>
-            <span style="color:var(--muted); font-weight:900"> • </span>
-            Rank: <span style="color:#e9ecff; font-weight:900">${esc(rank)}</span>
-          </p>
-        </div>
-        <div style="display:flex; gap:10px; align-items:center;">
-          <button class="btn" data-expand="ovr" aria-label="Expand OVR">Expand</button>
-          <button class="btn" data-close aria-label="Close Fullscreen">Close (Esc)</button>
-        </div>
-      `;
-
-      const body = document.createElement('div');
-      body.className='section-body';
-
-      const hero = document.createElement('div');
-      hero.className='ovr-wrap';
-      hero.innerHTML = `
-        <div class="ovr-hero">
-          <div class="ovr-badge">
-            ${badgeSVG(tier, rank)}
-          </div>
-          <div class="ovr-rank">${esc(rank)}</div>
-          <div class="ovr-meta">
-            OVR is hard on purpose. It rewards consistency <b>and</b> being well-rounded.<br/>
-            Missing categories and neglected habits cost points.
-          </div>
-
-          <div class="ovr-bars">
-            <div class="ovr-stat">
-              <span>OVR</span>
-              <b>${agg.ovr}</b>
-            </div>
-            <div class="ovr-stat">
-              <span>Month Completion</span>
-              <b>${agg.pct}%</b>
-            </div>
-            <div class="ovr-stat">
-              <span>Balance Multiplier</span>
-              <b>${agg.balanceMult.toFixed(2)}×</b>
-            </div>
-          </div>
-
-          <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
-            <button class="btn" type="button" id="exportMonthCsvBtn2">Export Month CSV</button>
-            <button class="btn" type="button" id="exportBtn2">Export JSON</button>
-          </div>
-        </div>
-      `;
-
-      body.appendChild(hero);
-
-      wrap.appendChild(head);
-      wrap.appendChild(body);
-
-      setTimeout(()=>{
-        const b1 = document.getElementById('exportMonthCsvBtn2');
-        const b2 = document.getElementById('exportBtn2');
-        b1 && b1.addEventListener('click', exportMonthCsv);
-        b2 && b2.addEventListener('click', exportJson);
-      }, 0);
-
-      return wrap;
-    }
-
-    // ========= Modal (Add/Edit) =========
-    function openHabitModalAdd(){
-      modalMode = 'add';
-      modalHabitId = null;
-      modalCategory = 'Order';
-      modalColorIndex = nextColorIndex();
-      showHabitModal(null);
-    }
-
-    function openHabitModalEdit(habitId){
-      const h = appState.habits.find(x=>x.id===habitId);
-      if(!h) return;
-
-      modalMode = 'edit';
-      modalHabitId = habitId;
-      modalCategory = CATEGORIES.includes(h.category) ? h.category : 'Order';
-      modalColorIndex = Number.isFinite(h.colorIndex) ? (h.colorIndex % HABIT_COLORS.length) : 0;
-
-      showHabitModal(h);
-    }
-
-    function closeHabitModal(){
-      modalOpen = false;
-      const m = document.getElementById('habitModal');
-      m.classList.remove('show');
-      m.setAttribute('aria-hidden','true');
-      modalHabitId = null;
-    }
-
-    function showHabitModal(habit){
-      modalOpen = true;
-
-      const m = document.getElementById('habitModal');
-      const title = document.getElementById('habitModalTitle');
-      const sub = document.getElementById('habitModalSub');
-      const nameInput = document.getElementById('habitNameInput');
-      const catSel = document.getElementById('habitCategorySelect');
-      const grid = document.getElementById('colorGrid');
-      const delRow = document.getElementById('deleteRow');
-
-      title.textContent = modalMode === 'add' ? 'Add Habit' : 'Edit Habit';
-      sub.textContent = modalMode === 'add'
-        ? 'Set the habit name, type, and color.'
-        : 'Update name, type, color — or delete it.';
-
-      catSel.innerHTML = CATEGORIES.map(c => `<option value="${c}">${c}</option>`).join('');
-      catSel.value = modalCategory;
-
-      nameInput.value = habit ? habit.name : '';
-
-      delRow.style.display = (modalMode === 'edit') ? 'block' : 'none';
-
-      grid.innerHTML = '';
-      HABIT_COLORS.forEach((hex, idx)=>{
-        const b = document.createElement('button');
-        b.type = 'button';
-        b.className = 'swatch';
-        b.style.background = hex;
-        b.setAttribute('aria-label', `Select color ${idx+1}`);
-        b.setAttribute('aria-selected', String(idx === modalColorIndex));
-        b.addEventListener('click', ()=>{
-          modalColorIndex = idx;
-          [...grid.children].forEach((el, i)=> el.setAttribute('aria-selected', String(i === modalColorIndex)));
-        });
-        grid.appendChild(b);
-      });
-
-      m.classList.add('show');
-      m.setAttribute('aria-hidden','false');
-      setTimeout(()=> nameInput.focus(), 0);
-    }
-
-    function saveHabitFromModal(){
-      const name = String(document.getElementById('habitNameInput').value || '').trim();
-      const category = String(document.getElementById('habitCategorySelect').value || 'Order');
-
-      if(!name) return alert('Habit name required.');
-
-      if(modalMode === 'add'){
-        update((s)=>{
-          s.habits.push({
-            id: crypto.randomUUID(),
-            name,
-            category: CATEGORIES.includes(category) ? category : 'Order',
-            colorIndex: modalColorIndex % HABIT_COLORS.length,
-            created: new Date().toISOString(),
-            completions: []
-          });
-        });
-      } else {
-        update((s)=>{
-          const h = s.habits.find(x=>x.id===modalHabitId);
-          if(!h) return;
-          h.name = name;
-          h.category = CATEGORIES.includes(category) ? category : 'Order';
-          h.colorIndex = modalColorIndex % HABIT_COLORS.length;
-        });
-      }
-
-      closeHabitModal();
-    }
-
-    function deleteHabitFromModal(){
-      if(modalMode !== 'edit' || !modalHabitId) return;
-      const h = appState.habits.find(x=>x.id===modalHabitId);
-      if(!h) return;
-      const ok = confirm(`Delete "${h.name}"? This removes its history.`);
-      if(!ok) return;
-
-      update((s)=>{
-        s.habits = s.habits.filter(x=>x.id!==modalHabitId);
-      });
-
-      if(insightsDetailHabitId === modalHabitId) insightsDetailHabitId = null;
-      closeHabitModal();
-    }
-
-    // ========= Exports =========
-    function exportJson(){
-      const blob = new Blob([JSON.stringify(appState, null, 2)], { type:'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `habit-tracker-${key(new Date())}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    function exportMonthCsv(){
-      const agg = monthAggHard(new Date());
-      const rank = rankFromOVR(agg.ovr);
-
-      const headers = [
-        'year_month','rank','ovr','month_completion_pct','balance_multiplier','penalty','streak_bonus',
-        ...CATEGORIES.map(c=>`cat_${c}_pct`),
-        ...CATEGORIES.map(c=>`cat_${c}_habits`)
-      ];
-
-      const row = [
-        agg.ym,
-        rank,
-        agg.ovr,
-        agg.pct,
-        agg.balanceMult.toFixed(2),
-        agg.penalty,
-        agg.streakBonus,
-        ...agg.catRates.map(r=>Math.round(r*100)),
-        ...agg.catHabits
-      ];
-
-      const csv = `${headers.join(',')}\n${row.join(',')}\n`;
-      const blob = new Blob([csv], { type:'text/csv;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `habit-month-${agg.ym}.csv`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    // ========= Helpers =========
     function bindDynamic(root){
       root.querySelectorAll('input[type="checkbox"]').forEach(box=>{
         box.addEventListener('change', (e)=>{
@@ -2003,19 +1227,6 @@
           toggle(habitId, date, e.target.checked);
         });
       });
-    }
-
-    function nextColorIndex(){
-      const counts = new Array(HABIT_COLORS.length).fill(0);
-      for(const h of appState.habits){
-        const i = Number.isFinite(h.colorIndex) ? (h.colorIndex % HABIT_COLORS.length) : 0;
-        counts[i]++;
-      }
-      let best = 0;
-      for(let i=1;i<counts.length;i++){
-        if(counts[i] < counts[best]) best = i;
-      }
-      return best;
     }
 
     // ========= Controls =========
@@ -2029,9 +1240,28 @@
         });
       });
 
-      document.getElementById('addHabitBtn').addEventListener('click', openHabitModalAdd);
-      document.getElementById('exportBtn').addEventListener('click', exportJson);
-      document.getElementById('exportMonthCsvBtn').addEventListener('click', exportMonthCsv);
+      document.getElementById('addHabitBtn').addEventListener('click', ()=>{
+        const name = prompt('Habit name:');
+        if(!name || !name.trim()) return;
+        update((s)=>{
+          s.habits.push({
+            id: crypto.randomUUID(),
+            name: name.trim(),
+            created: new Date().toISOString(),
+            completions: []
+          });
+        });
+      });
+
+      document.getElementById('exportBtn').addEventListener('click', ()=>{
+        const blob = new Blob([JSON.stringify(appState, null, 2)], { type:'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `habit-tracker-${key(new Date())}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      });
 
       document.getElementById('resetBtn').addEventListener('click', ()=>{
         const ok = confirm('Reset deletes habits + history on this device. Continue?');
@@ -2043,14 +1273,6 @@
       document.getElementById('askAiBtn').addEventListener('click', ()=>{
         alert('AI mode requires a small backend to protect the API key. We can add that next.');
       });
-
-      document.getElementById('habitModalCancelBtn').addEventListener('click', closeHabitModal);
-      document.getElementById('habitModalSaveBtn').addEventListener('click', saveHabitFromModal);
-      document.getElementById('habitDeleteBtn').addEventListener('click', deleteHabitFromModal);
-
-      document.getElementById('habitModal').addEventListener('click', (e)=>{
-        if(e.target.id === 'habitModal') closeHabitModal();
-      });
     }
 
     // ========= Expand-to-full + Detail =========
@@ -2061,10 +1283,9 @@
       document.body.setAttribute('data-expanded', which);
 
       requestAnimationFrame(() => {
-        const section =
-          which === 'ops' ? document.getElementById('opsSection')
-          : which === 'insights' ? document.getElementById('insightsSection')
-          : document.getElementById('ovrSection');
+        const section = which === 'ops'
+          ? document.getElementById('opsSection')
+          : document.getElementById('insightsSection');
         section?.querySelector('[data-close]')?.focus?.();
       });
     }
@@ -2105,13 +1326,13 @@
       });
     }
 
-    // ========= Global handlers =========
     document.addEventListener('click', (e) => {
-      if(modalOpen) return;
+      // Guard: interactive elements inside openables should not trigger open
+      if (e.target.closest('button.btn, input, label, a, select, textarea')) return;
 
-      const edit = e.target.closest('[data-edit-habit]');
-      if(edit){
-        openHabitModalEdit(edit.getAttribute('data-edit-habit'));
+      const open = e.target.closest('[data-open-habit]');
+      if(open){
+        openInsightsDetail(open.getAttribute('data-open-habit'), open);
         return;
       }
 
@@ -2155,23 +1376,9 @@
         clearExpanded();
         return;
       }
-
-      if (e.target.closest('button.btn, input, label, a, select, textarea')) return;
-
-      const open = e.target.closest('[data-open-habit]');
-      if(open){
-        openInsightsDetail(open.getAttribute('data-open-habit'), open);
-        return;
-      }
     });
 
     document.addEventListener('keydown', (e) => {
-      if(modalOpen && e.key === 'Escape'){
-        e.preventDefault();
-        closeHabitModal();
-        return;
-      }
-
       const openable = e.target?.closest?.('[data-open-habit]');
       if (openable && (e.key === 'Enter' || e.key === ' ')) {
         e.preventDefault();
