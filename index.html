@@ -417,12 +417,10 @@
     button.item{
       width:100%;
       cursor:pointer;
-
       display:flex;
       justify-content:space-between;
       align-items:center;
       gap:10px;
-
       appearance:none;
       -webkit-appearance:none;
       border:0;
@@ -504,8 +502,8 @@
       min-height:0;
     }
     .ovr-badge{
-      width:150px;
-      height:150px;
+      width:170px;
+      height:170px;
       border-radius:28px;
       border:1px solid var(--border);
       background:#0f1320;
@@ -513,7 +511,7 @@
       align-items:center;
       justify-content:center;
     }
-    .ovr-badge svg{ width:128px; height:128px; }
+    .ovr-badge svg{ width:148px; height:148px; }
     .ovr-rank{
       font-weight:900;
       letter-spacing:.12em;
@@ -629,11 +627,7 @@
       .ovr-bars{ grid-template-columns: 1fr; }
     }
 
-    .field{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
+    .field{ display:flex; flex-direction:column; gap:8px; }
     .label{
       color:var(--muted);
       font-weight:900;
@@ -732,7 +726,6 @@
       box-shadow: var(--shadow);
     }
 
-    /* OVR expands as its own fullscreen panel */
     body[data-expanded] #ovrSection{
       position: fixed;
       inset: 14px;
@@ -1073,62 +1066,125 @@
       return name;
     }
 
-    // ========= Coach =========
+    // ========= Coach (less generic, data-driven) =========
     function coachInsights(){
+      const habits = appState.habits;
+
+      if(!habits.length){
+        return {
+          headline: "Add 1 habit. Keep it small.",
+          bullets: [
+            "Pick one habit that takes 5 minutes.",
+            "Do it at a fixed trigger (after brushing teeth, after dinner).",
+            "Win today. Scale later."
+          ]
+        };
+      }
+
       const now = new Date();
       const w = isoWeek(now);
       const m = monthDays(now);
       const daysInMonth = m.length;
+      const todayKey = key(now);
 
-      const ranked = appState.habits.map(h=>{
+      const rows = habits.map(h=>{
         const weekDone = countInRange(h, w);
         const monthDone = countInRange(h, m);
-        const since = lastDoneDaysAgo(h);
-        const streak = currentStreak(h);
         const weekPct = Math.round((weekDone/7)*100);
         const monthPct = Math.round((monthDone/daysInMonth)*100);
+        const since = lastDoneDaysAgo(h);
+        const streak = currentStreak(h);
+        const didToday = done(h, todayKey);
 
-        const risk =
-          (since === Infinity ? 50 : Math.min(50, since*6)) +
-          (weekPct < 30 ? 20 : weekPct < 60 ? 10 : 0) +
-          (streak >= 3 ? -10 : 0);
+        const recencyRisk =
+          since === Infinity ? 60 :
+          since >= 7 ? 50 :
+          since >= 4 ? 35 :
+          since >= 3 ? 25 :
+          since >= 1 ? 10 : 0;
 
-        return { h, weekDone, weekPct, monthDone, monthPct, since, streak, risk };
+        const consistencyRisk =
+          weekPct < 15 ? 25 :
+          weekPct < 35 ? 18 :
+          weekPct < 55 ? 10 : 0;
+
+        const streakProtect = streak >= 4 ? -10 : streak >= 2 ? -5 : 0;
+
+        const risk = recencyRisk + consistencyRisk + streakProtect;
+
+        return { h, weekDone, weekPct, monthDone, monthPct, since, streak, didToday, risk };
       }).sort((a,b)=> b.risk - a.risk);
 
-      const topNeglected = ranked.slice(0, Math.min(3, ranked.length));
-      const topWinners = [...ranked].sort((a,b)=> b.weekPct - a.weekPct).slice(0, Math.min(2, ranked.length));
-
-      const todayKey = key(new Date());
-      const notDoneToday = ranked.filter(r => !done(r.h, todayKey)).slice(0, 3);
-
-      if(!appState.habits.length){
-        return {
-          headline: "Add 1 habit. Keep it small.",
-          bullets: ["Start with one habit you can do in 5 minutes.", "Consistency beats intensity."]
-        };
+      // category balance (weekly)
+      const cat = {};
+      for(const c of CATEGORIES) cat[c] = { done:0, possible:0, habits:0 };
+      for(const r of rows){
+        const c = CATEGORIES.includes(r.h.category) ? r.h.category : 'Order';
+        cat[c].done += r.weekDone;
+        cat[c].possible += 7;
+        cat[c].habits += 1;
       }
 
-      const messages = [];
-      const worst = topNeglected[0];
-      if(worst && worst.since >= 3){
-        messages.push(`Priority risk: "${worst.h.name}" is slipping (${worst.since === Infinity ? 'never done' : worst.since + ' day(s) since last'}).`);
-      } else {
-        messages.push(`You’re not in trouble. Keep the loop tight today.`);
+      const catRates = CATEGORIES.map(c => ({
+        c,
+        habits: cat[c].habits,
+        pct: cat[c].possible ? Math.round((cat[c].done / cat[c].possible)*100) : 0
+      }));
+
+      const missingCats = catRates.filter(x => x.habits === 0).map(x=>x.c);
+      const weakestOwned = catRates
+        .filter(x => x.habits > 0)
+        .sort((a,b)=> a.pct - b.pct)[0];
+
+      const notDoneToday = rows.filter(r => !r.didToday).slice(0, 3);
+      const worst = rows[0];
+
+      // headline
+      let headline = "Keep the loop tight today.";
+      if(worst){
+        if(worst.since === Infinity){
+          headline = `Start "${worst.h.name}" today. It has zero reps.`;
+        } else if(worst.since >= 4){
+          headline = `Fix "${worst.h.name}" today (${worst.since} days since last).`;
+        } else if(worst.weekPct < 35){
+          headline = `Stabilize "${worst.h.name}" (week at ${worst.weekPct}%).`;
+        }
       }
 
+      // bullets (concrete)
       const bullets = [];
+
       if(notDoneToday.length){
-        bullets.push(`Do these today (pick 1–3): ${notDoneToday.map(x=>`"${x.h.name}"`).join(', ')}.`);
+        bullets.push(`Today priorities: ${notDoneToday.map(x=>`"${x.h.name}"`).join(', ')}.`);
+      } else {
+        bullets.push("Today priorities: you’ve already hit everything you track for today.");
       }
-      if(topNeglected.length){
-        bullets.push(`Neglect list: ${topNeglected.map(x=>`"${x.h.name}"`).join(', ')}.`);
+
+      if(missingCats.length){
+        bullets.push(`Balance gap: you have no habits in ${missingCats.slice(0,2).join(' & ')}. Add 1 small habit there to raise OVR.`);
+      } else if(weakestOwned){
+        bullets.push(`Weakest domain this week: ${weakestOwned.c} at ${weakestOwned.pct}%. Do one rep there today.`);
       }
-      if(topWinners.length){
-        bullets.push(`What’s working: ${topWinners.map(x=>`"${x.h.name}"`).join(', ')}. Protect that momentum.`);
+
+      // shrink rule tailored
+      if(worst){
+        if(worst.since >= 3 || worst.since === Infinity){
+          bullets.push(`Shrink "${worst.h.name}" for 72 hours: minimum version only (2–5 minutes).`);
+        } else {
+          bullets.push(`Protect momentum: don’t skip 2 days in a row on any habit.`);
+        }
       }
-      bullets.push(`Rule: if a habit is missed 2+ days, shrink it until it’s impossible to fail.`);
-      return { headline: messages[0], bullets };
+
+      // streak protect
+      const bestStreak = [...rows].sort((a,b)=> b.streak - a.streak)[0];
+      if(bestStreak && bestStreak.streak >= 3){
+        bullets.push(`Streak to protect: "${bestStreak.h.name}" (${bestStreak.streak} days). Do it early to remove decision fatigue.`);
+      }
+
+      // hard constraint (explicit)
+      bullets.push(`Rule: 1) Never miss twice. 2) If you miss twice, the habit gets smaller immediately.`);
+
+      return { headline, bullets };
     }
 
     // ========= Rendering =========
@@ -1472,11 +1528,11 @@
       coach.innerHTML = `
         <div class="coach-head">
           <h3 class="coach-title">Coach</h3>
-          <span class="pill">Auto</span>
+          <span class="pill">Local</span>
         </div>
         <div class="coach-box">
           <div style="font-weight:900">${esc(coachData.headline)}</div>
-          <ul>${coachData.bullets.map(b=>`<li>${esc(b)}</li>`).join('')}</ul>
+          <ul>${coachData.bullets.slice(0,5).map(b=>`<li>${esc(b)}</li>`).join('')}</ul>
         </div>
       `;
 
@@ -1645,33 +1701,72 @@
 
     // ========= OVR view =========
     function badgeSVG(tier, rankText){
-      // Solid-color, no gradients. SVG is simple "game badge" with optional wings for Emerald/Apex.
-      const base = { bg:'#0f1320', stroke:'#22283a', accent:'#2563eb', wing:false, gem:false };
-      if(tier === 'Wood')   Object.assign(base,{accent:'#8b5a2b'});
-      if(tier === 'Steel')  Object.assign(base,{accent:'#94a3b8'});
-      if(tier === 'Bronze') Object.assign(base,{accent:'#b45309'});
-      if(tier === 'Silver') Object.assign(base,{accent:'#cbd5e1'});
-      if(tier === 'Gold')   Object.assign(base,{accent:'#f59e0b'});
-      if(tier === 'Platinum')Object.assign(base,{accent:'#60a5fa'});
-      if(tier === 'Emerald')Object.assign(base,{accent:'#22c55e', wing:true, gem:true});
-      if(tier === 'Apex')   Object.assign(base,{accent:'#7c3aed', wing:true, gem:true});
+      // Solid emblem (shield + banner). No gradients. Higher tiers get wings + gem.
+      const cfg = {
+        accent:'#2563eb',
+        accent2:'#0ea5e9',
+        wing:false,
+        gem:false,
+        stars:0
+      };
 
-      const wing = base.wing ? `
-        <path d="M12 46c10-10 22-14 30-12-10 10-14 22-12 30-8-8-14-18-18-18z" fill="${base.accent}" opacity="0.9"/>
-        <path d="M116 46c-10-10-22-14-30-12 10 10 14 22 12 30 8-8 14-18 18-18z" fill="${base.accent}" opacity="0.9"/>
+      if(tier === 'Wood')    Object.assign(cfg,{accent:'#8b5a2b', accent2:'#6b3f1b'});
+      if(tier === 'Steel')   Object.assign(cfg,{accent:'#94a3b8', accent2:'#64748b'});
+      if(tier === 'Bronze')  Object.assign(cfg,{accent:'#b45309', accent2:'#92400e'});
+      if(tier === 'Silver')  Object.assign(cfg,{accent:'#cbd5e1', accent2:'#94a3b8'});
+      if(tier === 'Gold')    Object.assign(cfg,{accent:'#f59e0b', accent2:'#ca8a04'});
+      if(tier === 'Platinum')Object.assign(cfg,{accent:'#60a5fa', accent2:'#2563eb'});
+      if(tier === 'Emerald') Object.assign(cfg,{accent:'#22c55e', accent2:'#16a34a', wing:true, gem:true});
+      if(tier === 'Apex')    Object.assign(cfg,{accent:'#7c3aed', accent2:'#a855f7', wing:true, gem:true});
+
+      // division stars (Wood 3/2/1 etc)
+      const parts = String(rankText).split(' ');
+      if(parts.length === 2){
+        const div = Number(parts[1]);
+        cfg.stars = (div === 1 ? 3 : div === 2 ? 2 : 1);
+      }
+
+      const wing = cfg.wing ? `
+        <path d="M10 62c16-18 34-24 46-20-14 14-18 34-14 46-14-10-22-26-32-26z" fill="${cfg.accent2}" opacity="0.95"/>
+        <path d="M118 62c-16-18-34-24-46-20 14 14 18 34 14 46 14-10 22-26 32-26z" fill="${cfg.accent2}" opacity="0.95"/>
       ` : '';
 
-      const gem = base.gem ? `
-        <path d="M64 28l14 12-14 28-14-28z" fill="${base.accent}" opacity="0.95"/>
+      const gem = cfg.gem ? `
+        <path d="M64 30l16 12-16 30-16-30z" fill="${cfg.accent}" opacity="0.98"/>
+      ` : '';
+
+      const stars = cfg.stars ? `
+        <g transform="translate(64 24)">
+          ${Array.from({length:cfg.stars}, (_,i)=>{
+            const x = (i - (cfg.stars-1)/2) * 12;
+            return `<path d="M${x} 0l2.2 5.8 6.2.2-4.9 3.8 1.7 6-5.2-3.3-5.2 3.3 1.7-6-4.9-3.8 6.2-.2z" fill="${cfg.accent}" opacity="0.95"/>`;
+          }).join('')}
+        </g>
       ` : '';
 
       return `
         <svg viewBox="0 0 128 128" aria-hidden="true">
           ${wing}
-          <rect x="24" y="18" width="80" height="92" rx="22" fill="${base.bg}" stroke="${base.stroke}" stroke-width="2"/>
-          <circle cx="64" cy="64" r="28" fill="none" stroke="${base.accent}" stroke-width="10"/>
+
+          <!-- outer plate -->
+          <path d="M64 10c18 0 34 6 46 12v44c0 26-16 46-46 54-30-8-46-28-46-54V22c12-6 28-12 46-12z"
+                fill="#0f1320" stroke="#22283a" stroke-width="2"/>
+
+          <!-- inner shield -->
+          <path d="M64 20c14 0 26 4 34 8v36c0 20-12 35-34 41-22-6-34-21-34-41V28c8-4 20-8 34-8z"
+                fill="#0c0f19" stroke="#22283a" stroke-width="2"/>
+
+          <!-- accent ring -->
+          <circle cx="64" cy="62" r="22" fill="none" stroke="${cfg.accent}" stroke-width="10"/>
+
+          <!-- banner -->
+          <path d="M24 86h80l-10 12H34z" fill="${cfg.accent2}" opacity="0.95"/>
+          <path d="M24 86h80l-10 12H34z" fill="none" stroke="#22283a" stroke-width="2"/>
+
+          ${stars}
           ${gem}
-          <text x="64" y="70" text-anchor="middle" font-size="12" font-weight="900" fill="#ffffff" style="letter-spacing:.12em;">
+
+          <text x="64" y="66" text-anchor="middle" font-size="12" font-weight="900" fill="#ffffff" style="letter-spacing:.10em;">
             ${esc(rankText)}
           </text>
         </svg>
@@ -1747,7 +1842,6 @@
       wrap.appendChild(head);
       wrap.appendChild(body);
 
-      // bind secondary buttons after attach
       setTimeout(()=>{
         const b1 = document.getElementById('exportMonthCsvBtn2');
         const b2 = document.getElementById('exportBtn2');
@@ -1760,22 +1854,22 @@
 
     // ========= Modal (Add/Edit) =========
     function openHabitModalAdd(){
-      modalOpen = true;
       modalMode = 'add';
       modalHabitId = null;
       modalCategory = 'Order';
       modalColorIndex = nextColorIndex();
-      showHabitModal();
+      showHabitModal(null);
     }
 
     function openHabitModalEdit(habitId){
       const h = appState.habits.find(x=>x.id===habitId);
       if(!h) return;
-      modalOpen = true;
+
       modalMode = 'edit';
       modalHabitId = habitId;
-      modalCategory = h.category || 'Order';
-      modalColorIndex = Number.isFinite(h.colorIndex) ? h.colorIndex : 0;
+      modalCategory = CATEGORIES.includes(h.category) ? h.category : 'Order';
+      modalColorIndex = Number.isFinite(h.colorIndex) ? (h.colorIndex % HABIT_COLORS.length) : 0;
+
       showHabitModal(h);
     }
 
@@ -1788,6 +1882,8 @@
     }
 
     function showHabitModal(habit){
+      modalOpen = true;
+
       const m = document.getElementById('habitModal');
       const title = document.getElementById('habitModalTitle');
       const sub = document.getElementById('habitModalSub');
@@ -1801,17 +1897,13 @@
         ? 'Set the habit name, type, and color.'
         : 'Update name, type, color — or delete it.';
 
-      // category options
       catSel.innerHTML = CATEGORIES.map(c => `<option value="${c}">${c}</option>`).join('');
       catSel.value = modalCategory;
 
-      // name
       nameInput.value = habit ? habit.name : '';
 
-      // delete section
       delRow.style.display = (modalMode === 'edit') ? 'block' : 'none';
 
-      // colors
       grid.innerHTML = '';
       HABIT_COLORS.forEach((hex, idx)=>{
         const b = document.createElement('button');
@@ -1822,7 +1914,6 @@
         b.setAttribute('aria-selected', String(idx === modalColorIndex));
         b.addEventListener('click', ()=>{
           modalColorIndex = idx;
-          // update selection visuals
           [...grid.children].forEach((el, i)=> el.setAttribute('aria-selected', String(i === modalColorIndex)));
         });
         grid.appendChild(b);
@@ -1830,8 +1921,6 @@
 
       m.classList.add('show');
       m.setAttribute('aria-hidden','false');
-
-      // focus for speed
       setTimeout(()=> nameInput.focus(), 0);
     }
 
@@ -1876,9 +1965,7 @@
         s.habits = s.habits.filter(x=>x.id!==modalHabitId);
       });
 
-      // if detail view was open for this habit, close it
       if(insightsDetailHabitId === modalHabitId) insightsDetailHabitId = null;
-
       closeHabitModal();
     }
 
@@ -1975,12 +2062,10 @@
         alert('AI mode requires a small backend to protect the API key. We can add that next.');
       });
 
-      // modal buttons
       document.getElementById('habitModalCancelBtn').addEventListener('click', closeHabitModal);
       document.getElementById('habitModalSaveBtn').addEventListener('click', saveHabitFromModal);
       document.getElementById('habitDeleteBtn').addEventListener('click', deleteHabitFromModal);
 
-      // close modal on backdrop click
       document.getElementById('habitModal').addEventListener('click', (e)=>{
         if(e.target.id === 'habitModal') closeHabitModal();
       });
@@ -2040,26 +2125,17 @@
 
     // ========= Global handlers =========
     document.addEventListener('click', (e) => {
-      // Modal open: allow its own click handling only
-      if(modalOpen){
-        return;
-      }
+      // If modal is open, don't run app click routing (modal handles itself)
+      if(modalOpen) return;
 
-      // Guard: interactive elements inside openables should not trigger open
-      if (e.target.closest('button.btn, input, label, a, select, textarea, button.icon-btn')) return;
-
+      // 1) EDIT HABIT MUST RUN BEFORE "interactive guard" (this fixes your broken Edit button)
       const edit = e.target.closest('[data-edit-habit]');
       if(edit){
         openHabitModalEdit(edit.getAttribute('data-edit-habit'));
         return;
       }
 
-      const open = e.target.closest('[data-open-habit]');
-      if(open){
-        openInsightsDetail(open.getAttribute('data-open-habit'), open);
-        return;
-      }
-
+      // direct actions
       const back = e.target.closest('[data-detail-close]');
       if(back){
         closeInsightsDetail();
@@ -2100,15 +2176,22 @@
         clearExpanded();
         return;
       }
+
+      // 2) Guard: interactive elements inside openables should not trigger "open detail"
+      if (e.target.closest('button.btn, input, label, a, select, textarea')) return;
+
+      const open = e.target.closest('[data-open-habit]');
+      if(open){
+        openInsightsDetail(open.getAttribute('data-open-habit'), open);
+        return;
+      }
     });
 
     document.addEventListener('keydown', (e) => {
-      if(modalOpen){
-        if(e.key === 'Escape'){
-          e.preventDefault();
-          closeHabitModal();
-          return;
-        }
+      if(modalOpen && e.key === 'Escape'){
+        e.preventDefault();
+        closeHabitModal();
+        return;
       }
 
       const openable = e.target?.closest?.('[data-open-habit]');
