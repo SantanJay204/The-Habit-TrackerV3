@@ -19,6 +19,7 @@
       --green:#22c55e;
       --amber:#f59e0b;
       --red:#ef4444;
+      --pink:#ec4899;
       --slate:#64748b;
 
       --radius:16px;
@@ -114,6 +115,11 @@
       background:var(--purple);
       color:#fff;
     }
+    .btn.danger{
+      border-color:transparent;
+      background:var(--red);
+      color:#fff;
+    }
     .btn:disabled{ opacity:.45; cursor:not-allowed; }
 
     main{
@@ -189,6 +195,7 @@
       text-align:center;
       font-size:.92rem;
       background:#0c0f19;
+      vertical-align:middle;
     }
     th{
       position:sticky;
@@ -205,7 +212,32 @@
     th:last-child, td:last-child{ border-right:none; }
     tr:last-child td{ border-bottom:none; }
 
-    .habit-name{ font-weight:900; letter-spacing:.01em; }
+    .habit-name{
+      font-weight:900;
+      letter-spacing:.01em;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .habit-sub{
+      color:var(--muted);
+      font-weight:900;
+      font-size:.78rem;
+    }
+
+    .icon-btn{
+      border:1px solid var(--border);
+      background:#0f1320;
+      color:#dbe1ff;
+      border-radius:10px;
+      padding:6px 10px;
+      font-weight:900;
+      cursor:pointer;
+      font-size:.78rem;
+      line-height:1;
+    }
+    .icon-btn:hover{ filter: brightness(1.05); }
 
     /* Habit checkbox: uses per-habit color via --habitColor */
     input[type="checkbox"]{
@@ -279,7 +311,6 @@
       min-height:0;
     }
 
-    /* Shared visual styling */
     .card{
       border:1px solid var(--border);
       background:#0c0f19;
@@ -292,8 +323,6 @@
       text-align:left;
       cursor:default;
     }
-
-    /* Button-only behavior */
     button.card{
       cursor:pointer;
       border:0;
@@ -305,7 +334,6 @@
       outline:2px solid var(--blue);
       outline-offset:2px;
     }
-    button.card[disabled]{ cursor:default; opacity:1; }
 
     .card-top{
       display:flex;
@@ -386,7 +414,6 @@
     }
     .item small{ color:var(--muted); font-weight:900; }
 
-    /* Neglected rows are <button class="item"> — normalize button defaults */
     button.item{
       width:100%;
       cursor:pointer;
@@ -421,7 +448,6 @@
     .badge.warn{ background:var(--amber); }
     .badge.ok{ background:var(--green); }
     .badge.new{ background:var(--slate); }
-    .badge.streak{ background:var(--purple); }
 
     .coach{
       display:flex;
@@ -457,6 +483,203 @@
     }
     .coach-box ul{ margin:8px 0 0 18px; padding:0; }
     .coach-box li{ margin:6px 0; }
+
+    /* ======= OVR / Rank view ======= */
+    .ovr-wrap{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      min-height:0;
+    }
+    .ovr-hero{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding:18px;
+      border:1px solid var(--border);
+      background:#0c0f19;
+      border-radius:var(--radius);
+      min-height:0;
+    }
+    .ovr-badge{
+      width:150px;
+      height:150px;
+      border-radius:28px;
+      border:1px solid var(--border);
+      background:#0f1320;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .ovr-badge svg{ width:128px; height:128px; }
+    .ovr-rank{
+      font-weight:900;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-size:.95rem;
+    }
+    .ovr-meta{
+      color:var(--muted);
+      font-weight:900;
+      font-size:.85rem;
+      text-align:center;
+      line-height:1.35;
+    }
+    .ovr-bars{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap:12px;
+      width:100%;
+      max-width:820px;
+    }
+    .ovr-stat{
+      border:1px solid var(--border);
+      background:#0f1320;
+      border-radius:16px;
+      padding:12px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .ovr-stat span{
+      color:var(--muted);
+      font-weight:900;
+      font-size:.78rem;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+    .ovr-stat b{
+      font-weight:900;
+      font-size:1.25rem;
+      color:#e9ecff;
+    }
+
+    /* ======= Modal (Add/Edit Habit) ======= */
+    .modal{
+      position:fixed;
+      inset:0;
+      z-index:10050;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:14px;
+    }
+    .modal.show{ display:flex; }
+    .modal::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:#070912;
+      opacity:.88;
+    }
+    .modal-card{
+      position:relative;
+      width:min(720px, 96vw);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      background:var(--panel2);
+      box-shadow:var(--shadow);
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      max-height:calc(100vh - 28px);
+    }
+    .modal-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .modal-title{
+      margin:0;
+      font-size:.95rem;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-weight:900;
+    }
+    .modal-sub{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-weight:800;
+      font-size:.85rem;
+    }
+    .modal-body{
+      overflow:auto;
+      border:1px solid var(--border);
+      background:#0c0f19;
+      border-radius:16px;
+      padding:12px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      min-height:0;
+    }
+
+    .field-row{
+      display:grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap:12px;
+    }
+    @media (max-width: 720px){
+      .field-row{ grid-template-columns: 1fr; }
+      .ovr-bars{ grid-template-columns: 1fr; }
+    }
+
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .label{
+      color:var(--muted);
+      font-weight:900;
+      font-size:.78rem;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+    .input, .select{
+      border:1px solid var(--border);
+      background:#0f1320;
+      color:var(--text);
+      border-radius:14px;
+      padding:10px 12px;
+      font-weight:900;
+      outline:none;
+    }
+    .input:focus, .select:focus{
+      border-color:#2c3550;
+      outline:2px solid rgba(37,99,235,0.35);
+      outline-offset:2px;
+    }
+
+    .color-grid{
+      display:grid;
+      grid-template-columns: repeat(12, minmax(0,1fr));
+      gap:8px;
+    }
+    @media (max-width: 720px){
+      .color-grid{ grid-template-columns: repeat(8, minmax(0,1fr)); }
+    }
+    .swatch{
+      width:100%;
+      aspect-ratio:1/1;
+      border-radius:12px;
+      border:1px solid var(--border);
+      cursor:pointer;
+      background: #11162a;
+      position:relative;
+    }
+    .swatch[aria-selected="true"]::after{
+      content:"";
+      position:absolute;
+      inset:6px;
+      border:2px solid #fff;
+      border-radius:10px;
+    }
 
     footer{
       padding:14px;
@@ -494,10 +717,12 @@
     }
 
     body[data-expanded="ops"] #insightsSection,
-    body[data-expanded="insights"] #opsSection { display: none; }
+    body[data-expanded="insights"] #opsSection,
+    body[data-expanded="ovr"] #opsSection,
+    body[data-expanded="ovr"] #insightsSection { display: none; }
 
     body[data-expanded] #opsSection,
-    body[data-expanded] #insightsSection {
+    body[data-expanded] #insightsSection{
       position: fixed;
       inset: 14px;
       z-index: 9999;
@@ -507,8 +732,19 @@
       box-shadow: var(--shadow);
     }
 
+    /* OVR expands as its own fullscreen panel */
+    body[data-expanded] #ovrSection{
+      position: fixed;
+      inset: 14px;
+      z-index: 9999;
+      border-radius: var(--radius);
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      display:block !important;
+    }
+
     [data-close]{ display:none; }
-    [data-close][hidden]{ display:none; }
     body[data-expanded] [data-close]{ display:inline-flex !important; }
     body[data-expanded] [data-expand] { display: none !important; }
   </style>
@@ -525,6 +761,7 @@
         <nav class="tabs" aria-label="View Switcher">
           <button class="tab active" data-view="weekly">Weekly</button>
           <button class="tab" data-view="monthly">Monthly</button>
+          <button class="tab" data-view="ovr">OVR</button>
         </nav>
         <button class="btn" id="exportBtn" title="Export data as JSON">Export JSON</button>
         <button class="btn" id="exportMonthCsvBtn" title="Export this month to CSV">Export Month CSV</button>
@@ -541,13 +778,58 @@
     </footer>
   </div>
 
+  <!-- Add/Edit Habit Modal -->
+  <div class="modal" id="habitModal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="habitModalTitle">
+      <div class="modal-head">
+        <div>
+          <h2 class="modal-title" id="habitModalTitle">Habit</h2>
+          <p class="modal-sub" id="habitModalSub">Create or edit a habit.</p>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button class="btn" id="habitModalCancelBtn" type="button">Cancel</button>
+          <button class="btn primary" id="habitModalSaveBtn" type="button">Save</button>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <div class="field-row">
+          <div class="field">
+            <div class="label">Habit Name</div>
+            <input class="input" id="habitNameInput" placeholder="e.g., No vape, Gym, Journal" />
+          </div>
+
+          <div class="field">
+            <div class="label">Type</div>
+            <select class="select" id="habitCategorySelect"></select>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="label">Color</div>
+          <div class="color-grid" id="colorGrid"></div>
+        </div>
+
+        <div class="field" id="deleteRow" style="display:none;">
+          <div class="label">Danger Zone</div>
+          <div class="item" style="justify-content:space-between;">
+            <div>
+              <div style="font-weight:900">Delete habit</div>
+              <small>This removes the habit and its history.</small>
+            </div>
+            <button class="btn danger" id="habitDeleteBtn" type="button">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     // ========= Config =========
-    const STORAGE_KEY = 'habit-tracker-solid-coach-v2';
+    const STORAGE_KEY = 'habit-tracker-solid-coach-v3';
 
     const CATEGORIES = ['Body','Mind','Money','Craft','People','Order'];
 
-    // 24 solid, high-contrast accent colors (no gradients)
     const HABIT_COLORS = [
       '#7c3aed', '#2563eb', '#14b8a6', '#22c55e', '#f59e0b', '#ef4444',
       '#ec4899', '#06b6d4', '#10b981', '#a855f7', '#3b82f6', '#84cc16',
@@ -561,6 +843,13 @@
     const appState = load() || { habits: [] };
     let activeView = 'weekly';
     let insightsDetailHabitId = null;
+
+    // modal state
+    let modalOpen = false;
+    let modalMode = 'add'; // 'add' | 'edit'
+    let modalHabitId = null;
+    let modalColorIndex = 0;
+    let modalCategory = 'Order';
 
     function load(){
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -688,7 +977,6 @@
         ? habitRates.reduce((a,b)=>a+b,0) / habitRates.length
         : 0;
 
-      // category aggregation (missing categories count as 0%)
       const cat = {};
       for(const c of CATEGORIES) cat[c] = { done:0, possible:0, habits:0 };
 
@@ -716,7 +1004,6 @@
         : 0;
       const streakBonus = Math.round(streakAvg * 12);
 
-      // penalties
       let penalty = 0;
 
       for(const h of habits){
@@ -726,11 +1013,9 @@
         else if(since >= 4) penalty += 2;
       }
 
-      // category neglect (<20%) but only if you have any habit at all in that category
       for(const c of CATEGORIES){
         const r = (cat[c].possible ? (cat[c].done / cat[c].possible) : 0);
         if(cat[c].habits > 0 && r < 0.20) penalty += 6;
-        // missing category habits is a "well-rounded" failure: penalize
         if(cat[c].habits === 0 && habits.length > 0) penalty += 6;
       }
 
@@ -762,7 +1047,6 @@
     }
 
     function rankFromOVR(ovr){
-      // Hard ladder (you earn it). 3 divisions per league.
       const ladder = [
         { name:'Wood',    min:  0, max: 19 },
         { name:'Steel',   min: 20, max: 34 },
@@ -775,13 +1059,18 @@
       ];
 
       const tier = ladder.find(t => ovr >= t.min && ovr <= t.max) || ladder[0];
-
       if(tier.name === 'Apex') return 'Apex';
+
       const span = (tier.max - tier.min + 1);
       const step = Math.ceil(span / 3);
       const pos = ovr - tier.min;
       const div = pos < step ? 3 : pos < step*2 ? 2 : 1;
       return `${tier.name} ${div}`;
+    }
+
+    function rankTier(ovr){
+      const name = rankFromOVR(ovr).split(' ')[0];
+      return name;
     }
 
     // ========= Coach =========
@@ -823,13 +1112,12 @@
       const messages = [];
       const worst = topNeglected[0];
       if(worst && worst.since >= 3){
-        messages.push(`Priority risk: "${worst.h.name}" is slipping (${worst.since === Infinity ? 'never done' : worst.since + ' days since last'}).`);
+        messages.push(`Priority risk: "${worst.h.name}" is slipping (${worst.since === Infinity ? 'never done' : worst.since + ' day(s) since last'}).`);
       } else {
         messages.push(`You’re not in trouble. Keep the loop tight today.`);
       }
 
       const bullets = [];
-
       if(notDoneToday.length){
         bullets.push(`Do these today (pick 1–3): ${notDoneToday.map(x=>`"${x.h.name}"`).join(', ')}.`);
       }
@@ -840,7 +1128,6 @@
         bullets.push(`What’s working: ${topWinners.map(x=>`"${x.h.name}"`).join(', ')}. Protect that momentum.`);
       }
       bullets.push(`Rule: if a habit is missed 2+ days, shrink it until it’s impossible to fail.`);
-
       return { headline: messages[0], bullets };
     }
 
@@ -905,7 +1192,13 @@
       setMeta();
       const shell = document.getElementById('mainShell');
       shell.innerHTML = '';
-      shell.appendChild(renderDashboard());
+
+      if(activeView === 'ovr'){
+        shell.appendChild(renderOVR());
+      } else {
+        shell.appendChild(renderDashboard());
+      }
+
       bindDynamic(shell);
     }
 
@@ -999,7 +1292,16 @@
           const pct = Math.round((doneCount/7)*100);
           const c = habitColor(h);
 
-          let row = `<td><div class="habit-name">${esc(h.name)} <span style="color:var(--muted); font-weight:900; font-size:.78rem;">• ${esc(h.category)}</span></div></td>`;
+          let row = `
+            <td>
+              <div class="habit-name">
+                ${esc(h.name)}
+                <span class="habit-sub">• ${esc(h.category)}</span>
+                <button class="icon-btn" type="button" data-edit-habit="${h.id}" aria-label="Edit habit ${esc(h.name)}">Edit</button>
+              </div>
+            </td>
+          `;
+
           weekDates.forEach(d=>{
             const dk = key(d);
             const checked = done(h, dk) ? 'checked' : '';
@@ -1034,7 +1336,16 @@
           const pct = Math.round((doneCount/daysInMonth)*100);
           const c = habitColor(h);
 
-          let row = `<td><div class="habit-name">${esc(h.name)} <span style="color:var(--muted); font-weight:900; font-size:.78rem;">• ${esc(h.category)}</span></div></td>`;
+          let row = `
+            <td>
+              <div class="habit-name">
+                ${esc(h.name)}
+                <span class="habit-sub">• ${esc(h.category)}</span>
+                <button class="icon-btn" type="button" data-edit-habit="${h.id}" aria-label="Edit habit ${esc(h.name)}">Edit</button>
+              </div>
+            </td>
+          `;
+
           for(let day=1; day<=31; day++){
             const date = md[day-1];
             if(!date){ row += `<td style="opacity:.35">—</td>`; continue; }
@@ -1115,10 +1426,8 @@
         return { h, monthDone, monthPct, since };
       });
 
-      // Top habits: by month completion %
       const cardsData = [...ranked].sort((a,b)=> b.monthPct - a.monthPct).slice(0, 6);
 
-      // Neglected: by days since last (Infinity first)
       const neglected = [...ranked].sort((a,b)=>{
         const sa = a.since === Infinity ? 9999 : a.since;
         const sb = b.since === Infinity ? 9999 : b.since;
@@ -1128,7 +1437,6 @@
       const grid = document.createElement('div');
       grid.className='grid';
 
-      // Cards: simplified (title + ring only)
       const cards = document.createElement('div');
       cards.className='cards';
       cardsData.forEach((r)=>{
@@ -1215,16 +1523,11 @@
       }
 
       const now = new Date();
-      const w = isoWeek(now);
       const m = monthDays(now);
       const daysInMonth = m.length;
 
-      const weekDone = countInRange(h, w);
       const monthDone = countInRange(h, m);
-      const weekPct = Math.round((weekDone/7)*100);
       const monthPct = Math.round((monthDone/daysInMonth)*100);
-      const since = lastDoneDaysAgo(h);
-      const streak = currentStreak(h);
 
       const today = new Date(); today.setHours(0,0,0,0);
       const last14 = Array.from({length:14}, (_,i)=>{
@@ -1235,6 +1538,7 @@
 
       const c = habitColor(h);
       const ringColor = performanceColor(monthPct);
+      const since = lastDoneDaysAgo(h);
       const lastKey = lastDoneKey(h);
 
       container.innerHTML = `
@@ -1245,8 +1549,6 @@
               Category: <span style="color:#e9ecff; font-weight:900">${esc(h.category)}</span>
               <span style="color:var(--muted); font-weight:900"> • </span>
               Last: <span style="color:#e9ecff; font-weight:900">${since === Infinity ? 'Never' : `${since} day(s) ago (${lastKey})`}</span>
-              <span style="color:var(--muted); font-weight:900"> • </span>
-              Streak: <span style="color:#e9ecff; font-weight:900">${streak}</span>
             </p>
           </div>
           <div style="display:flex; gap:10px; align-items:center;">
@@ -1313,6 +1615,13 @@
               <div class="items">
                 <div class="item">
                   <div>
+                    <div style="font-weight:900">Edit habit</div>
+                    <small>Rename, category, color, delete</small>
+                  </div>
+                  <button class="btn" type="button" data-edit-habit="${h.id}">Edit</button>
+                </div>
+                <div class="item">
+                  <div>
                     <div style="font-weight:900">Mark today complete</div>
                     <small>${key(new Date())}</small>
                   </div>
@@ -1334,34 +1643,254 @@
       return container;
     }
 
-    function bindDynamic(root){
-      root.querySelectorAll('input[type="checkbox"]').forEach(box=>{
-        box.addEventListener('change', (e)=>{
-          const { habitId, date } = e.target.dataset;
-          toggle(habitId, date, e.target.checked);
+    // ========= OVR view =========
+    function badgeSVG(tier, rankText){
+      // Solid-color, no gradients. SVG is simple "game badge" with optional wings for Emerald/Apex.
+      const base = { bg:'#0f1320', stroke:'#22283a', accent:'#2563eb', wing:false, gem:false };
+      if(tier === 'Wood')   Object.assign(base,{accent:'#8b5a2b'});
+      if(tier === 'Steel')  Object.assign(base,{accent:'#94a3b8'});
+      if(tier === 'Bronze') Object.assign(base,{accent:'#b45309'});
+      if(tier === 'Silver') Object.assign(base,{accent:'#cbd5e1'});
+      if(tier === 'Gold')   Object.assign(base,{accent:'#f59e0b'});
+      if(tier === 'Platinum')Object.assign(base,{accent:'#60a5fa'});
+      if(tier === 'Emerald')Object.assign(base,{accent:'#22c55e', wing:true, gem:true});
+      if(tier === 'Apex')   Object.assign(base,{accent:'#7c3aed', wing:true, gem:true});
+
+      const wing = base.wing ? `
+        <path d="M12 46c10-10 22-14 30-12-10 10-14 22-12 30-8-8-14-18-18-18z" fill="${base.accent}" opacity="0.9"/>
+        <path d="M116 46c-10-10-22-14-30-12 10 10 14 22 12 30 8-8 14-18 18-18z" fill="${base.accent}" opacity="0.9"/>
+      ` : '';
+
+      const gem = base.gem ? `
+        <path d="M64 28l14 12-14 28-14-28z" fill="${base.accent}" opacity="0.95"/>
+      ` : '';
+
+      return `
+        <svg viewBox="0 0 128 128" aria-hidden="true">
+          ${wing}
+          <rect x="24" y="18" width="80" height="92" rx="22" fill="${base.bg}" stroke="${base.stroke}" stroke-width="2"/>
+          <circle cx="64" cy="64" r="28" fill="none" stroke="${base.accent}" stroke-width="10"/>
+          ${gem}
+          <text x="64" y="70" text-anchor="middle" font-size="12" font-weight="900" fill="#ffffff" style="letter-spacing:.12em;">
+            ${esc(rankText)}
+          </text>
+        </svg>
+      `;
+    }
+
+    function renderOVR(){
+      const wrap = document.createElement('section');
+      wrap.className='section';
+      wrap.id='ovrSection';
+
+      const agg = monthAggHard(new Date());
+      const rank = rankFromOVR(agg.ovr);
+      const tier = rankTier(agg.ovr);
+
+      const head = document.createElement('div');
+      head.className='section-head';
+      head.innerHTML = `
+        <div>
+          <h2 class="section-title">OVR</h2>
+          <p class="section-sub">
+            Month: <span style="color:#e9ecff; font-weight:900">${agg.ym}</span>
+            <span style="color:var(--muted); font-weight:900"> • </span>
+            Rank: <span style="color:#e9ecff; font-weight:900">${esc(rank)}</span>
+          </p>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button class="btn" data-expand="ovr" aria-label="Expand OVR">Expand</button>
+          <button class="btn" data-close aria-label="Close Fullscreen">Close (Esc)</button>
+        </div>
+      `;
+
+      const body = document.createElement('div');
+      body.className='section-body';
+
+      const hero = document.createElement('div');
+      hero.className='ovr-wrap';
+      hero.innerHTML = `
+        <div class="ovr-hero">
+          <div class="ovr-badge">
+            ${badgeSVG(tier, rank)}
+          </div>
+          <div class="ovr-rank">${esc(rank)}</div>
+          <div class="ovr-meta">
+            OVR is hard on purpose. It rewards consistency <b>and</b> being well-rounded.<br/>
+            Missing categories and neglected habits cost points.
+          </div>
+
+          <div class="ovr-bars">
+            <div class="ovr-stat">
+              <span>OVR</span>
+              <b>${agg.ovr}</b>
+            </div>
+            <div class="ovr-stat">
+              <span>Month Completion</span>
+              <b>${agg.pct}%</b>
+            </div>
+            <div class="ovr-stat">
+              <span>Balance Multiplier</span>
+              <b>${agg.balanceMult.toFixed(2)}×</b>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+            <button class="btn" type="button" id="exportMonthCsvBtn2">Export Month CSV</button>
+            <button class="btn" type="button" id="exportBtn2">Export JSON</button>
+          </div>
+        </div>
+      `;
+
+      body.appendChild(hero);
+
+      wrap.appendChild(head);
+      wrap.appendChild(body);
+
+      // bind secondary buttons after attach
+      setTimeout(()=>{
+        const b1 = document.getElementById('exportMonthCsvBtn2');
+        const b2 = document.getElementById('exportBtn2');
+        b1 && b1.addEventListener('click', exportMonthCsv);
+        b2 && b2.addEventListener('click', exportJson);
+      }, 0);
+
+      return wrap;
+    }
+
+    // ========= Modal (Add/Edit) =========
+    function openHabitModalAdd(){
+      modalOpen = true;
+      modalMode = 'add';
+      modalHabitId = null;
+      modalCategory = 'Order';
+      modalColorIndex = nextColorIndex();
+      showHabitModal();
+    }
+
+    function openHabitModalEdit(habitId){
+      const h = appState.habits.find(x=>x.id===habitId);
+      if(!h) return;
+      modalOpen = true;
+      modalMode = 'edit';
+      modalHabitId = habitId;
+      modalCategory = h.category || 'Order';
+      modalColorIndex = Number.isFinite(h.colorIndex) ? h.colorIndex : 0;
+      showHabitModal(h);
+    }
+
+    function closeHabitModal(){
+      modalOpen = false;
+      const m = document.getElementById('habitModal');
+      m.classList.remove('show');
+      m.setAttribute('aria-hidden','true');
+      modalHabitId = null;
+    }
+
+    function showHabitModal(habit){
+      const m = document.getElementById('habitModal');
+      const title = document.getElementById('habitModalTitle');
+      const sub = document.getElementById('habitModalSub');
+      const nameInput = document.getElementById('habitNameInput');
+      const catSel = document.getElementById('habitCategorySelect');
+      const grid = document.getElementById('colorGrid');
+      const delRow = document.getElementById('deleteRow');
+
+      title.textContent = modalMode === 'add' ? 'Add Habit' : 'Edit Habit';
+      sub.textContent = modalMode === 'add'
+        ? 'Set the habit name, type, and color.'
+        : 'Update name, type, color — or delete it.';
+
+      // category options
+      catSel.innerHTML = CATEGORIES.map(c => `<option value="${c}">${c}</option>`).join('');
+      catSel.value = modalCategory;
+
+      // name
+      nameInput.value = habit ? habit.name : '';
+
+      // delete section
+      delRow.style.display = (modalMode === 'edit') ? 'block' : 'none';
+
+      // colors
+      grid.innerHTML = '';
+      HABIT_COLORS.forEach((hex, idx)=>{
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'swatch';
+        b.style.background = hex;
+        b.setAttribute('aria-label', `Select color ${idx+1}`);
+        b.setAttribute('aria-selected', String(idx === modalColorIndex));
+        b.addEventListener('click', ()=>{
+          modalColorIndex = idx;
+          // update selection visuals
+          [...grid.children].forEach((el, i)=> el.setAttribute('aria-selected', String(i === modalColorIndex)));
         });
+        grid.appendChild(b);
       });
+
+      m.classList.add('show');
+      m.setAttribute('aria-hidden','false');
+
+      // focus for speed
+      setTimeout(()=> nameInput.focus(), 0);
     }
 
-    // ========= Controls =========
-    function nextColorIndex(){
-      // pick least-used color index
-      const counts = new Array(HABIT_COLORS.length).fill(0);
-      for(const h of appState.habits){
-        const i = Number.isFinite(h.colorIndex) ? (h.colorIndex % HABIT_COLORS.length) : 0;
-        counts[i]++;
+    function saveHabitFromModal(){
+      const name = String(document.getElementById('habitNameInput').value || '').trim();
+      const category = String(document.getElementById('habitCategorySelect').value || 'Order');
+
+      if(!name) return alert('Habit name required.');
+
+      if(modalMode === 'add'){
+        update((s)=>{
+          s.habits.push({
+            id: crypto.randomUUID(),
+            name,
+            category: CATEGORIES.includes(category) ? category : 'Order',
+            colorIndex: modalColorIndex % HABIT_COLORS.length,
+            created: new Date().toISOString(),
+            completions: []
+          });
+        });
+      } else {
+        update((s)=>{
+          const h = s.habits.find(x=>x.id===modalHabitId);
+          if(!h) return;
+          h.name = name;
+          h.category = CATEGORIES.includes(category) ? category : 'Order';
+          h.colorIndex = modalColorIndex % HABIT_COLORS.length;
+        });
       }
-      let best = 0;
-      for(let i=1;i<counts.length;i++){
-        if(counts[i] < counts[best]) best = i;
-      }
-      return best;
+
+      closeHabitModal();
     }
 
-    function promptCategory(){
-      const raw = prompt(`Category? (${CATEGORIES.join(', ')})`, 'Order');
-      const val = String(raw || '').trim();
-      return CATEGORIES.includes(val) ? val : 'Order';
+    function deleteHabitFromModal(){
+      if(modalMode !== 'edit' || !modalHabitId) return;
+      const h = appState.habits.find(x=>x.id===modalHabitId);
+      if(!h) return;
+      const ok = confirm(`Delete "${h.name}"? This removes its history.`);
+      if(!ok) return;
+
+      update((s)=>{
+        s.habits = s.habits.filter(x=>x.id!==modalHabitId);
+      });
+
+      // if detail view was open for this habit, close it
+      if(insightsDetailHabitId === modalHabitId) insightsDetailHabitId = null;
+
+      closeHabitModal();
+    }
+
+    // ========= Exports =========
+    function exportJson(){
+      const blob = new Blob([JSON.stringify(appState, null, 2)], { type:'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `habit-tracker-${key(new Date())}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
     }
 
     function exportMonthCsv(){
@@ -1396,6 +1925,30 @@
       URL.revokeObjectURL(url);
     }
 
+    // ========= Rendering helpers =========
+    function bindDynamic(root){
+      root.querySelectorAll('input[type="checkbox"]').forEach(box=>{
+        box.addEventListener('change', (e)=>{
+          const { habitId, date } = e.target.dataset;
+          toggle(habitId, date, e.target.checked);
+        });
+      });
+    }
+
+    function nextColorIndex(){
+      const counts = new Array(HABIT_COLORS.length).fill(0);
+      for(const h of appState.habits){
+        const i = Number.isFinite(h.colorIndex) ? (h.colorIndex % HABIT_COLORS.length) : 0;
+        counts[i]++;
+      }
+      let best = 0;
+      for(let i=1;i<counts.length;i++){
+        if(counts[i] < counts[best]) best = i;
+      }
+      return best;
+    }
+
+    // ========= Controls =========
     function bindControls(){
       document.querySelectorAll('.tab').forEach(btn=>{
         btn.addEventListener('click', ()=>{
@@ -1406,32 +1959,9 @@
         });
       });
 
-      document.getElementById('addHabitBtn').addEventListener('click', ()=>{
-        const name = prompt('Habit name:');
-        if(!name || !name.trim()) return;
-        const category = promptCategory();
-        update((s)=>{
-          s.habits.push({
-            id: crypto.randomUUID(),
-            name: name.trim(),
-            category,
-            colorIndex: nextColorIndex(),
-            created: new Date().toISOString(),
-            completions: []
-          });
-        });
-      });
+      document.getElementById('addHabitBtn').addEventListener('click', openHabitModalAdd);
 
-      document.getElementById('exportBtn').addEventListener('click', ()=>{
-        const blob = new Blob([JSON.stringify(appState, null, 2)], { type:'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `habit-tracker-${key(new Date())}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
-      });
-
+      document.getElementById('exportBtn').addEventListener('click', exportJson);
       document.getElementById('exportMonthCsvBtn').addEventListener('click', exportMonthCsv);
 
       document.getElementById('resetBtn').addEventListener('click', ()=>{
@@ -1444,6 +1974,16 @@
       document.getElementById('askAiBtn').addEventListener('click', ()=>{
         alert('AI mode requires a small backend to protect the API key. We can add that next.');
       });
+
+      // modal buttons
+      document.getElementById('habitModalCancelBtn').addEventListener('click', closeHabitModal);
+      document.getElementById('habitModalSaveBtn').addEventListener('click', saveHabitFromModal);
+      document.getElementById('habitDeleteBtn').addEventListener('click', deleteHabitFromModal);
+
+      // close modal on backdrop click
+      document.getElementById('habitModal').addEventListener('click', (e)=>{
+        if(e.target.id === 'habitModal') closeHabitModal();
+      });
     }
 
     // ========= Expand-to-full + Detail =========
@@ -1454,9 +1994,10 @@
       document.body.setAttribute('data-expanded', which);
 
       requestAnimationFrame(() => {
-        const section = which === 'ops'
-          ? document.getElementById('opsSection')
-          : document.getElementById('insightsSection');
+        const section =
+          which === 'ops' ? document.getElementById('opsSection')
+          : which === 'insights' ? document.getElementById('insightsSection')
+          : document.getElementById('ovrSection');
         section?.querySelector('[data-close]')?.focus?.();
       });
     }
@@ -1497,9 +2038,21 @@
       });
     }
 
+    // ========= Global handlers =========
     document.addEventListener('click', (e) => {
+      // Modal open: allow its own click handling only
+      if(modalOpen){
+        return;
+      }
+
       // Guard: interactive elements inside openables should not trigger open
-      if (e.target.closest('button.btn, input, label, a, select, textarea')) return;
+      if (e.target.closest('button.btn, input, label, a, select, textarea, button.icon-btn')) return;
+
+      const edit = e.target.closest('[data-edit-habit]');
+      if(edit){
+        openHabitModalEdit(edit.getAttribute('data-edit-habit'));
+        return;
+      }
 
       const open = e.target.closest('[data-open-habit]');
       if(open){
@@ -1550,6 +2103,14 @@
     });
 
     document.addEventListener('keydown', (e) => {
+      if(modalOpen){
+        if(e.key === 'Escape'){
+          e.preventDefault();
+          closeHabitModal();
+          return;
+        }
+      }
+
       const openable = e.target?.closest?.('[data-open-habit]');
       if (openable && (e.key === 'Enter' || e.key === ' ')) {
         e.preventDefault();
