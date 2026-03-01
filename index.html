@@ -15,10 +15,10 @@
 
       --purple:#7c3aed;
       --blue:#2563eb;
+      --teal:#14b8a6;
       --green:#22c55e;
       --amber:#f59e0b;
       --red:#ef4444;
-      --teal:#14b8a6;
       --slate:#64748b;
 
       --radius:16px;
@@ -59,11 +59,7 @@
       flex-wrap:wrap;
     }
 
-    .title{
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-    }
+    .title{ display:flex; flex-direction:column; gap:4px; }
     h1{
       margin:0;
       font-size:1.05rem;
@@ -102,10 +98,7 @@
       cursor:pointer;
       letter-spacing:.02em;
     }
-    .tab.active{
-      background:var(--blue);
-      color:#fff;
-    }
+    .tab.active{ background:var(--blue); color:#fff; }
 
     .btn{
       border:1px solid var(--border);
@@ -121,10 +114,7 @@
       background:var(--purple);
       color:#fff;
     }
-    .btn:disabled{
-      opacity:.45;
-      cursor:not-allowed;
-    }
+    .btn:disabled{ opacity:.45; cursor:not-allowed; }
 
     main{
       padding:14px;
@@ -215,12 +205,11 @@
     th:last-child, td:last-child{ border-right:none; }
     tr:last-child td{ border-bottom:none; }
 
-    .habit-name{
-      font-weight:900;
-      letter-spacing:.01em;
-    }
+    .habit-name{ font-weight:900; letter-spacing:.01em; }
 
+    /* Habit checkbox: uses per-habit color via --habitColor */
     input[type="checkbox"]{
+      --habitColor: var(--blue);
       appearance:none;
       -webkit-appearance:none;
       width:22px;
@@ -233,7 +222,7 @@
     }
     input[type="checkbox"]:checked{
       border-color:transparent;
-      background:var(--accent, var(--blue));
+      background:var(--habitColor);
     }
     input[type="checkbox"]:checked::after{
       content:'';
@@ -264,7 +253,7 @@
     .fill{
       height:100%;
       width:0%;
-      background:var(--accent, var(--purple));
+      background:var(--purple);
     }
     .pct{
       min-width:84px;
@@ -290,7 +279,7 @@
       min-height:0;
     }
 
-    /* Cursor policy: only buttons look clickable */
+    /* Shared visual styling */
     .card{
       border:1px solid var(--border);
       background:#0c0f19;
@@ -304,11 +293,9 @@
       cursor:default;
     }
 
+    /* Button-only behavior */
     button.card{
       cursor:pointer;
-
-      appearance:none;
-      -webkit-appearance:none;
       border:0;
       background:transparent;
       color:inherit;
@@ -318,35 +305,18 @@
       outline:2px solid var(--blue);
       outline-offset:2px;
     }
-    button.card[disabled]{
-      cursor:default;
-      opacity:1;
-    }
+    button.card[disabled]{ cursor:default; opacity:1; }
 
-    /* Minimal insight card layout */
-    .card-min{
+    .card-top{
+      display:flex;
+      justify-content:space-between;
       align-items:center;
-      justify-content:center;
-      text-align:center;
       gap:10px;
-      padding:14px 12px;
     }
-    .card-min .card-name{
+    .card-name{
       font-weight:900;
-      letter-spacing:.02em;
-      line-height:1.1;
-    }
-
-    .ring{
-      width:104px;
-      height:104px;
-      flex:0 0 auto;
-    }
-    .ring text{
-      font-weight:900;
-      fill:#fff;
-      font-size:10px;
-      letter-spacing:.06em;
+      line-height:1.15;
+      letter-spacing:.01em;
     }
 
     .pill{
@@ -358,6 +328,24 @@
       border:1px solid var(--border);
       color:#dbe1ff;
       white-space:nowrap;
+    }
+
+    .ring-wrap{
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      gap:12px;
+    }
+    .ring{
+      width:92px;
+      height:92px;
+      flex:0 0 auto;
+    }
+    .ring text{
+      font-weight:900;
+      fill:#fff;
+      font-size:10px;
+      letter-spacing:.06em;
     }
 
     .list{
@@ -398,7 +386,7 @@
     }
     .item small{ color:var(--muted); font-weight:900; }
 
-    /* Neglected rows are <button class="item"> — normalize defaults, keep .item layout/visuals */
+    /* Neglected rows are <button class="item"> — normalize button defaults */
     button.item{
       width:100%;
       cursor:pointer;
@@ -433,6 +421,7 @@
     .badge.warn{ background:var(--amber); }
     .badge.ok{ background:var(--green); }
     .badge.new{ background:var(--slate); }
+    .badge.streak{ background:var(--purple); }
 
     .coach{
       display:flex;
@@ -487,8 +476,6 @@
 
     /* Expand-to-full system */
     body[data-expanded] { overflow: hidden; }
-
-    /* Dim backdrop in fullscreen (solid, no gradient) */
     body[data-expanded]::before{
       content:"";
       position:fixed;
@@ -499,7 +486,6 @@
     }
 
     .section { min-height: 0; }
-
     .section .section-body{
       min-height:0;
       overflow:auto;
@@ -507,11 +493,8 @@
       flex: 1 1 auto;
     }
 
-    /* Fullscreen state */
     body[data-expanded="ops"] #insightsSection,
-    body[data-expanded="insights"] #opsSection {
-      display: none;
-    }
+    body[data-expanded="insights"] #opsSection { display: none; }
 
     body[data-expanded] #opsSection,
     body[data-expanded] #insightsSection {
@@ -524,12 +507,9 @@
       box-shadow: var(--shadow);
     }
 
-    /* Close visibility: CSS controls only */
     [data-close]{ display:none; }
     [data-close][hidden]{ display:none; }
     body[data-expanded] [data-close]{ display:inline-flex !important; }
-
-    /* Expand visibility */
     body[data-expanded] [data-expand] { display: none !important; }
   </style>
 </head>
@@ -546,7 +526,8 @@
           <button class="tab active" data-view="weekly">Weekly</button>
           <button class="tab" data-view="monthly">Monthly</button>
         </nav>
-        <button class="btn" id="exportBtn" title="Export data as JSON">Export</button>
+        <button class="btn" id="exportBtn" title="Export data as JSON">Export JSON</button>
+        <button class="btn" id="exportMonthCsvBtn" title="Export this month to CSV">Export Month CSV</button>
         <button class="btn" id="askAiBtn" title="Requires backend (disabled for now)" disabled>Ask AI</button>
         <button class="btn primary" id="addHabitBtn">+ Habit</button>
       </div>
@@ -561,16 +542,22 @@
   </div>
 
   <script>
-    // ========= Palette (24 solid accents) =========
-    const PALETTE = [
+    // ========= Config =========
+    const STORAGE_KEY = 'habit-tracker-solid-coach-v2';
+
+    const CATEGORIES = ['Body','Mind','Money','Craft','People','Order'];
+
+    // 24 solid, high-contrast accent colors (no gradients)
+    const HABIT_COLORS = [
       '#7c3aed', '#2563eb', '#14b8a6', '#22c55e', '#f59e0b', '#ef4444',
-      '#ec4899', '#8b5cf6', '#06b6d4', '#10b981', '#84cc16', '#f97316',
-      '#e11d48', '#a855f7', '#3b82f6', '#0ea5e9', '#2dd4bf', '#16a34a',
-      '#eab308', '#dc2626', '#f43f5e', '#6366f1', '#0f766e', '#94a3b8'
+      '#ec4899', '#06b6d4', '#10b981', '#a855f7', '#3b82f6', '#84cc16',
+      '#f97316', '#e11d48', '#0ea5e9', '#8b5cf6', '#f43f5e', '#16a34a',
+      '#d946ef', '#0d9488', '#ca8a04', '#dc2626', '#0891b2', '#4f46e5'
     ];
 
+    function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+
     // ========= State =========
-    const STORAGE_KEY = 'habit-tracker-solid-coach-v1';
     const appState = load() || { habits: [] };
     let activeView = 'weekly';
     let insightsDetailHabitId = null;
@@ -581,12 +568,14 @@
       try{
         const parsed = JSON.parse(raw);
         if(!parsed || !Array.isArray(parsed.habits)) return null;
-        parsed.habits = parsed.habits.map((h, idx) => ({
+
+        parsed.habits = parsed.habits.map(h => ({
           id: String(h.id || crypto.randomUUID()),
           name: String(h.name || 'Untitled Habit'),
+          category: CATEGORIES.includes(h.category) ? h.category : 'Order',
+          colorIndex: Number.isFinite(h.colorIndex) ? (h.colorIndex % HABIT_COLORS.length) : 0,
           created: h.created || new Date().toISOString(),
-          completions: Array.isArray(h.completions) ? h.completions : [],
-          colorIndex: Number.isFinite(h.colorIndex) ? h.colorIndex : (idx % PALETTE.length)
+          completions: Array.isArray(h.completions) ? h.completions : []
         }));
         return parsed;
       }catch{ return null; }
@@ -606,6 +595,12 @@
       const m = String(date.getMonth()+1).padStart(2,'0');
       const d = String(date.getDate()).padStart(2,'0');
       return `${y}-${m}-${d}`;
+    }
+
+    function yearMonth(date){
+      const y = date.getFullYear();
+      const m = String(date.getMonth()+1).padStart(2,'0');
+      return `${y}-${m}`;
     }
 
     function isoWeek(ref = new Date()){
@@ -631,11 +626,6 @@
     // ========= Habit logic =========
     function done(habit, dateKey){ return habit.completions.includes(dateKey); }
 
-    function habitAccent(h){
-      const idx = (Number.isFinite(h.colorIndex) ? h.colorIndex : 0) % PALETTE.length;
-      return PALETTE[(idx + PALETTE.length) % PALETTE.length];
-    }
-
     function toggle(habitId, dateKey, checked){
       update((s)=>{
         const h = s.habits.find(x=>x.id===habitId);
@@ -650,17 +640,17 @@
       return dates.reduce((sum, d)=> sum + (done(habit, key(d)) ? 1 : 0), 0);
     }
 
+    function lastDoneKey(habit){
+      if(!habit.completions.length) return null;
+      return habit.completions[habit.completions.length - 1];
+    }
+
     function lastDoneDaysAgo(habit){
       if(!habit.completions.length) return Infinity;
       const last = habit.completions[habit.completions.length - 1];
       const lastDate = new Date(last + 'T00:00:00');
       const today = new Date(); today.setHours(0,0,0,0);
       return Math.floor((today - lastDate) / (1000*60*60*24));
-    }
-
-    function lastDoneDateKey(habit){
-      if(!habit.completions.length) return null;
-      return habit.completions[habit.completions.length - 1];
     }
 
     function currentStreak(habit){
@@ -673,6 +663,125 @@
         else break;
       }
       return streak;
+    }
+
+    function habitColor(h){ return HABIT_COLORS[(h.colorIndex || 0) % HABIT_COLORS.length]; }
+
+    // ========= Rank / OVR (hard, well-rounded) =========
+    function monthAggHard(ref = new Date()){
+      const days = monthDays(ref);
+      const daysInMonth = days.length;
+      const habits = appState.habits;
+
+      const habitsCount = habits.length;
+      const possible = habitsCount * daysInMonth;
+
+      let doneTotal = 0;
+
+      const habitRates = habits.map(h => {
+        const doneCnt = countInRange(h, days);
+        doneTotal += doneCnt;
+        return habitsCount ? (doneCnt / daysInMonth) : 0;
+      });
+
+      const avgRate = habitRates.length
+        ? habitRates.reduce((a,b)=>a+b,0) / habitRates.length
+        : 0;
+
+      // category aggregation (missing categories count as 0%)
+      const cat = {};
+      for(const c of CATEGORIES) cat[c] = { done:0, possible:0, habits:0 };
+
+      for(const h of habits){
+        const c = CATEGORIES.includes(h.category) ? h.category : 'Order';
+        const doneCnt = countInRange(h, days);
+        cat[c].done += doneCnt;
+        cat[c].possible += daysInMonth;
+        cat[c].habits += 1;
+      }
+
+      const catRates = CATEGORIES.map(c => {
+        const p = cat[c].possible;
+        return p ? (cat[c].done / p) : 0;
+      });
+
+      const mean = catRates.reduce((a,b)=>a+b,0) / catRates.length;
+      const variance = catRates.reduce((s,x)=> s + (x-mean)*(x-mean), 0) / catRates.length;
+      const std = Math.sqrt(variance);
+
+      const balanceMult = clamp(1.10 - (std * 1.25), 0.60, 1.10);
+
+      const streakAvg = habits.length
+        ? habits.reduce((s,h)=> s + (Math.min(currentStreak(h), 7)/7), 0) / habits.length
+        : 0;
+      const streakBonus = Math.round(streakAvg * 12);
+
+      // penalties
+      let penalty = 0;
+
+      for(const h of habits){
+        const since = lastDoneDaysAgo(h);
+        if(since === Infinity) penalty += 6;
+        else if(since >= 7) penalty += 4;
+        else if(since >= 4) penalty += 2;
+      }
+
+      // category neglect (<20%) but only if you have any habit at all in that category
+      for(const c of CATEGORIES){
+        const r = (cat[c].possible ? (cat[c].done / cat[c].possible) : 0);
+        if(cat[c].habits > 0 && r < 0.20) penalty += 6;
+        // missing category habits is a "well-rounded" failure: penalize
+        if(cat[c].habits === 0 && habits.length > 0) penalty += 6;
+      }
+
+      const top = Math.max(...catRates);
+      const bottom = Math.min(...catRates);
+      if(top > 0 && top > 2 * (bottom + 0.0001)) penalty += 6;
+
+      penalty = clamp(penalty, 0, 30);
+
+      const base = Math.round(avgRate * 75);
+      const ovr = clamp(Math.round(base * balanceMult - penalty + streakBonus), 0, 99);
+
+      const pct = possible ? Math.round((doneTotal / possible) * 100) : 0;
+
+      return {
+        ym: yearMonth(ref),
+        daysInMonth,
+        habitsCount,
+        possible,
+        doneTotal,
+        pct,
+        ovr,
+        balanceMult,
+        penalty,
+        streakBonus,
+        catRates,
+        catHabits: CATEGORIES.map(c => cat[c].habits)
+      };
+    }
+
+    function rankFromOVR(ovr){
+      // Hard ladder (you earn it). 3 divisions per league.
+      const ladder = [
+        { name:'Wood',    min:  0, max: 19 },
+        { name:'Steel',   min: 20, max: 34 },
+        { name:'Bronze',  min: 35, max: 49 },
+        { name:'Silver',  min: 50, max: 64 },
+        { name:'Gold',    min: 65, max: 74 },
+        { name:'Platinum',min: 75, max: 84 },
+        { name:'Emerald', min: 85, max: 92 },
+        { name:'Apex',    min: 93, max: 99 }
+      ];
+
+      const tier = ladder.find(t => ovr >= t.min && ovr <= t.max) || ladder[0];
+
+      if(tier.name === 'Apex') return 'Apex';
+      const span = (tier.max - tier.min + 1);
+      const step = Math.ceil(span / 3);
+      const pos = ovr - tier.min;
+      const div = pos < step ? 3 : pos < step*2 ? 2 : 1;
+      return `${tier.name} ${div}`;
     }
 
     // ========= Coach =========
@@ -735,22 +844,6 @@
       return { headline: messages[0], bullets };
     }
 
-    // ========= Insights coloring (no gradients) =========
-    function statusColorForPct(pct){
-      if(pct < 25) return 'var(--red)';
-      if(pct < 50) return 'var(--amber)';
-      if(pct < 75) return 'var(--teal)';
-      return 'var(--green)';
-    }
-
-    function neglectedBadgeForDays(days){
-      // days = "days since last completion"
-      if(days === Infinity) return { cls:'new', label:'NEW', note:'Never completed' };
-      if(days <= 1) return { cls:'ok', label:'ON TRACK', note:`Last done ${days}d ago` };
-      if(days <= 3) return { cls:'warn', label:'SLIPPING', note:`Last done ${days}d ago` };
-      return { cls:'bad', label:'NEGLECTED', note:`Last done ${days}d ago` };
-    }
-
     // ========= Rendering =========
     function esc(s){
       return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
@@ -773,7 +866,7 @@
     }
 
     function ringSVG(percent, color){
-      const size=104, r=40, cx=size/2, cy=size/2;
+      const size=92, r=36, cx=size/2, cy=size/2;
       const c=2*Math.PI*r;
       const p=Math.max(0, Math.min(100, percent));
       const off=c*(1-p/100);
@@ -788,6 +881,24 @@
           <text x="${cx}" y="${cy+4}" text-anchor="middle">${p}%</text>
         </svg>
       `;
+    }
+
+    function performanceColor(pct){
+      if(pct < 25) return 'var(--red)';
+      if(pct < 50) return 'var(--amber)';
+      if(pct < 75) return 'var(--teal)';
+      return 'var(--green)';
+    }
+
+    function neglectBadge(h){
+      const since = lastDoneDaysAgo(h);
+      const last = lastDoneKey(h);
+
+      if(since === Infinity) return { cls:'new', label:'Never', sub:`No completions yet` };
+      if(since === 0) return { cls:'ok', label:'Today', sub:`Last done: ${last}` };
+      if(since <= 2) return { cls:'ok', label:`${since}d`, sub:`${since} day(s) since last • ${last}` };
+      if(since <= 6) return { cls:'warn', label:`${since}d`, sub:`${since} day(s) since last • ${last}` };
+      return { cls:'bad', label:`${since}d`, sub:`${since} day(s) since last • ${last}` };
     }
 
     function render(){
@@ -883,22 +994,22 @@
 
         const tbody = document.createElement('tbody');
         appState.habits.forEach(h=>{
-          const accent = habitAccent(h);
           const tr = document.createElement('tr');
           const doneCount = countInRange(h, weekDates);
           const pct = Math.round((doneCount/7)*100);
+          const c = habitColor(h);
 
-          let row = `<td><div class="habit-name">${esc(h.name)}</div></td>`;
+          let row = `<td><div class="habit-name">${esc(h.name)} <span style="color:var(--muted); font-weight:900; font-size:.78rem;">• ${esc(h.category)}</span></div></td>`;
           weekDates.forEach(d=>{
             const dk = key(d);
             const checked = done(h, dk) ? 'checked' : '';
-            row += `<td><input type="checkbox" style="--accent:${accent}" data-habit-id="${h.id}" data-date="${dk}" ${checked} aria-label="${esc(h.name)} ${dk}"></td>`;
+            row += `<td><input type="checkbox" style="--habitColor:${c}" data-habit-id="${h.id}" data-date="${dk}" ${checked} aria-label="${esc(h.name)} ${dk}"></td>`;
           });
 
           row += `
             <td>
               <div class="progress">
-                <div class="bar"><div class="fill" style="width:${pct}%; --accent:${accent}"></div></div>
+                <div class="bar"><div class="fill" style="width:${pct}%; background:${c}"></div></div>
                 <div class="pct">${doneCount}/7 • ${pct}%</div>
               </div>
             </td>`;
@@ -918,24 +1029,24 @@
 
         const tbody = document.createElement('tbody');
         appState.habits.forEach(h=>{
-          const accent = habitAccent(h);
           const tr = document.createElement('tr');
           const doneCount = countInRange(h, md);
           const pct = Math.round((doneCount/daysInMonth)*100);
+          const c = habitColor(h);
 
-          let row = `<td><div class="habit-name">${esc(h.name)}</div></td>`;
+          let row = `<td><div class="habit-name">${esc(h.name)} <span style="color:var(--muted); font-weight:900; font-size:.78rem;">• ${esc(h.category)}</span></div></td>`;
           for(let day=1; day<=31; day++){
             const date = md[day-1];
             if(!date){ row += `<td style="opacity:.35">—</td>`; continue; }
             const dk = key(date);
             const checked = done(h, dk) ? 'checked' : '';
-            row += `<td><input type="checkbox" style="--accent:${accent}" data-habit-id="${h.id}" data-date="${dk}" ${checked} aria-label="${esc(h.name)} ${dk}"></td>`;
+            row += `<td><input type="checkbox" style="--habitColor:${c}" data-habit-id="${h.id}" data-date="${dk}" ${checked} aria-label="${esc(h.name)} ${dk}"></td>`;
           }
 
           row += `
             <td>
               <div class="progress">
-                <div class="bar"><div class="fill" style="width:${pct}%; --accent:${accent}"></div></div>
+                <div class="bar"><div class="fill" style="width:${pct}%; background:${c}"></div></div>
                 <div class="pct">${doneCount}/${daysInMonth} • ${pct}%</div>
               </div>
             </td>`;
@@ -955,10 +1066,20 @@
     function renderInsightsHeader(){
       const head = document.createElement('div');
       head.className = 'section-head';
+
+      const agg = monthAggHard(new Date());
+      const rank = rankFromOVR(agg.ovr);
+
       head.innerHTML = `
         <div>
           <h2 class="section-title">Insights</h2>
-          <p class="section-sub">Less noise. Only the signal.</p>
+          <p class="section-sub">
+            Rank: <span style="color:#e9ecff; font-weight:900">${esc(rank)}</span>
+            <span style="color:var(--muted); font-weight:900"> • </span>
+            OVR: <span style="color:#e9ecff; font-weight:900">${agg.ovr}</span>
+            <span style="color:var(--muted); font-weight:900"> • </span>
+            Month completion: <span style="color:#e9ecff; font-weight:900">${agg.pct}%</span>
+          </p>
         </div>
         <div style="display:flex; gap:10px; align-items:center;">
           <button class="btn" data-expand="insights" aria-label="Expand Insights">Expand</button>
@@ -987,42 +1108,46 @@
       const m = monthDays(now);
       const daysInMonth = m.length;
 
-      const ranked = appState.habits.map((h, idx)=>{
+      const ranked = appState.habits.map((h)=>{
         const monthDone = countInRange(h, m);
         const monthPct = Math.round((monthDone/daysInMonth)*100);
         const since = lastDoneDaysAgo(h);
-        const lastKey = lastDoneDateKey(h);
-        return { h, monthPct, since, lastKey, idx };
+        return { h, monthDone, monthPct, since };
       });
 
+      // Top habits: by month completion %
       const cardsData = [...ranked].sort((a,b)=> b.monthPct - a.monthPct).slice(0, 6);
 
-      // Neglected: prioritize "never" first, then higher days-since-last
+      // Neglected: by days since last (Infinity first)
       const neglected = [...ranked].sort((a,b)=>{
-        if(a.since === Infinity && b.since !== Infinity) return -1;
-        if(b.since === Infinity && a.since !== Infinity) return 1;
-        return b.since - a.since;
+        const sa = a.since === Infinity ? 9999 : a.since;
+        const sb = b.since === Infinity ? 9999 : b.since;
+        return sb - sa;
       }).slice(0, 10);
 
       const grid = document.createElement('div');
       grid.className='grid';
 
+      // Cards: simplified (title + ring only)
       const cards = document.createElement('div');
       cards.className='cards';
-
       cardsData.forEach((r)=>{
-        const color = statusColorForPct(r.monthPct);
+        const ringColor = performanceColor(r.monthPct);
 
         const card = document.createElement('button');
         card.type = 'button';
-        card.className='card card-min';
+        card.className='card';
         card.setAttribute('data-open-habit', r.h.id);
         card.setAttribute('aria-label', `Open details for ${r.h.name}`);
 
-        // Minimal: title + ring only
         card.innerHTML = `
-          <div class="card-name">${esc(r.h.name)}</div>
-          ${ringSVG(r.monthPct, color)}
+          <div class="card-top">
+            <div class="card-name">${esc(r.h.name)}</div>
+            <div class="pill">${esc(r.h.category)}</div>
+          </div>
+          <div class="ring-wrap">
+            ${ringSVG(r.monthPct, ringColor)}
+          </div>
         `;
         cards.appendChild(card);
       });
@@ -1039,7 +1164,7 @@
       coach.innerHTML = `
         <div class="coach-head">
           <h3 class="coach-title">Coach</h3>
-          <span class="pill">Auto-analysis</span>
+          <span class="pill">Auto</span>
         </div>
         <div class="coach-box">
           <div style="font-weight:900">${esc(coachData.headline)}</div>
@@ -1053,23 +1178,18 @@
       const items = list.querySelector('.items');
 
       neglected.forEach(r=>{
-        const meta = neglectedBadgeForDays(r.since);
+        const b = neglectBadge(r.h);
         const item = document.createElement('button');
         item.type = 'button';
         item.className='item';
         item.setAttribute('data-open-habit', r.h.id);
         item.setAttribute('aria-label', `Open details for ${r.h.name}`);
-
-        const lastLine = r.since === Infinity
-          ? `Last: never`
-          : (r.lastKey ? `Last: ${r.lastKey} (${r.since}d ago)` : `Last: ${r.since}d ago`);
-
         item.innerHTML = `
           <div>
             <div style="font-weight:900">${esc(r.h.name)}</div>
-            <small>${esc(lastLine)}</small>
+            <small>${esc(b.sub)}</small>
           </div>
-          <div class="badge ${meta.cls}">${meta.label}</div>
+          <div class="badge ${b.cls}">${esc(b.label)}</div>
         `;
         items.appendChild(item);
       });
@@ -1094,15 +1214,16 @@
         return container;
       }
 
-      const accent = habitAccent(h);
       const now = new Date();
+      const w = isoWeek(now);
       const m = monthDays(now);
       const daysInMonth = m.length;
 
+      const weekDone = countInRange(h, w);
       const monthDone = countInRange(h, m);
+      const weekPct = Math.round((weekDone/7)*100);
       const monthPct = Math.round((monthDone/daysInMonth)*100);
       const since = lastDoneDaysAgo(h);
-      const lastKey = lastDoneDateKey(h);
       const streak = currentStreak(h);
 
       const today = new Date(); today.setHours(0,0,0,0);
@@ -1112,11 +1233,21 @@
         return d;
       });
 
+      const c = habitColor(h);
+      const ringColor = performanceColor(monthPct);
+      const lastKey = lastDoneKey(h);
+
       container.innerHTML = `
         <div class="section-head">
           <div>
             <h2 class="section-title">${esc(h.name)} • Detail</h2>
-            <p class="section-sub">Consistency + recency.</p>
+            <p class="section-sub">
+              Category: <span style="color:#e9ecff; font-weight:900">${esc(h.category)}</span>
+              <span style="color:var(--muted); font-weight:900"> • </span>
+              Last: <span style="color:#e9ecff; font-weight:900">${since === Infinity ? 'Never' : `${since} day(s) ago (${lastKey})`}</span>
+              <span style="color:var(--muted); font-weight:900"> • </span>
+              Streak: <span style="color:#e9ecff; font-weight:900">${streak}</span>
+            </p>
           </div>
           <div style="display:flex; gap:10px; align-items:center;">
             <button class="btn" data-detail-close type="button">Back</button>
@@ -1127,27 +1258,22 @@
         <div class="grid" style="grid-template-columns: 1fr 0.9fr;">
           <div class="cards" style="grid-template-columns: repeat(2, minmax(0,1fr));">
             <div class="card">
-              <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
-                <div style="font-weight:900">Month</div>
-                <span class="pill">${monthDone}/${daysInMonth}</span>
+              <div class="card-top">
+                <div class="card-name">Month</div>
+                <div class="pill">${monthPct}%</div>
               </div>
-              <div style="display:flex; justify-content:center;">
-                ${ringSVG(monthPct, statusColorForPct(monthPct))}
+              <div class="ring-wrap">
+                ${ringSVG(monthPct, ringColor)}
               </div>
-              <div style="display:flex; justify-content:space-between; gap:10px; color:var(--muted); font-weight:900; font-size:.85rem;">
-                <span>Last</span>
-                <span style="color:#e9ecff;">${since === Infinity ? 'Never' : (lastKey ? `${lastKey} (${since}d)` : `${since}d`)}</span>
-              </div>
-              <div style="display:flex; justify-content:space-between; gap:10px; color:var(--muted); font-weight:900; font-size:.85rem;">
-                <span>Streak</span>
-                <span style="color:#e9ecff;">${streak} day(s)</span>
+              <div style="color:var(--muted); font-weight:900; font-size:.85rem;">
+                ${monthDone}/${daysInMonth} days completed
               </div>
             </div>
 
             <div class="card">
-              <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
-                <div style="font-weight:900">Last 14 Days</div>
-                <span class="pill">Tap to mark</span>
+              <div class="card-top">
+                <div class="card-name">Last 14 Days</div>
+                <div class="pill">Tap to mark</div>
               </div>
               <div style="display:grid; grid-template-columns: repeat(7, minmax(0,1fr)); gap:8px;">
                 ${last14.map(d=>{
@@ -1156,7 +1282,7 @@
                   return `
                     <label style="display:flex; flex-direction:column; gap:6px; align-items:center; padding:8px; border:1px solid var(--border); border-radius:12px; background:#0f1320;">
                       <div style="font-weight:900; font-size:.78rem; color:var(--muted)">${d.getMonth()+1}/${d.getDate()}</div>
-                      <input type="checkbox" style="--accent:${accent}" data-habit-id="${h.id}" data-date="${dk}" ${checked} aria-label="${esc(h.name)} ${dk}">
+                      <input type="checkbox" style="--habitColor:${c}" data-habit-id="${h.id}" data-date="${dk}" ${checked} aria-label="${esc(h.name)} ${dk}">
                     </label>
                   `;
                 }).join('')}
@@ -1168,16 +1294,16 @@
             <div class="coach">
               <div class="coach-head">
                 <h3 class="coach-title">Coach</h3>
-                <span class="pill">Single-habit</span>
+                <span class="pill">Single</span>
               </div>
               <div class="coach-box">
                 <div style="font-weight:900">
-                  ${since >= 3 ? `This habit is sliding (${since === Infinity ? 'never done' : since + ' days since last'}).` : `This habit is stable. Keep the loop tight.`}
+                  ${since >= 3 ? `This habit is sliding (${since === Infinity ? 'never done' : since + ' day(s) since last'}).` : `This habit is stable. Keep the loop tight.`}
                 </div>
                 <ul>
                   <li>Minimum viable version: reduce it until you can’t fail.</li>
                   <li>Lock a trigger: attach it to a fixed daily event.</li>
-                  <li>Don’t “make up” misses. Just restart today.</li>
+                  <li>Don’t make up misses. Restart today.</li>
                 </ul>
               </div>
             </div>
@@ -1218,6 +1344,58 @@
     }
 
     // ========= Controls =========
+    function nextColorIndex(){
+      // pick least-used color index
+      const counts = new Array(HABIT_COLORS.length).fill(0);
+      for(const h of appState.habits){
+        const i = Number.isFinite(h.colorIndex) ? (h.colorIndex % HABIT_COLORS.length) : 0;
+        counts[i]++;
+      }
+      let best = 0;
+      for(let i=1;i<counts.length;i++){
+        if(counts[i] < counts[best]) best = i;
+      }
+      return best;
+    }
+
+    function promptCategory(){
+      const raw = prompt(`Category? (${CATEGORIES.join(', ')})`, 'Order');
+      const val = String(raw || '').trim();
+      return CATEGORIES.includes(val) ? val : 'Order';
+    }
+
+    function exportMonthCsv(){
+      const agg = monthAggHard(new Date());
+      const rank = rankFromOVR(agg.ovr);
+
+      const headers = [
+        'year_month','rank','ovr','month_completion_pct','balance_multiplier','penalty','streak_bonus',
+        ...CATEGORIES.map(c=>`cat_${c}_pct`),
+        ...CATEGORIES.map(c=>`cat_${c}_habits`)
+      ];
+
+      const row = [
+        agg.ym,
+        rank,
+        agg.ovr,
+        agg.pct,
+        agg.balanceMult.toFixed(2),
+        agg.penalty,
+        agg.streakBonus,
+        ...agg.catRates.map(r=>Math.round(r*100)),
+        ...agg.catHabits
+      ];
+
+      const csv = `${headers.join(',')}\n${row.join(',')}\n`;
+      const blob = new Blob([csv], { type:'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `habit-month-${agg.ym}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
     function bindControls(){
       document.querySelectorAll('.tab').forEach(btn=>{
         btn.addEventListener('click', ()=>{
@@ -1231,15 +1409,15 @@
       document.getElementById('addHabitBtn').addEventListener('click', ()=>{
         const name = prompt('Habit name:');
         if(!name || !name.trim()) return;
-
+        const category = promptCategory();
         update((s)=>{
-          const nextIndex = s.habits.length % PALETTE.length;
           s.habits.push({
             id: crypto.randomUUID(),
             name: name.trim(),
+            category,
+            colorIndex: nextColorIndex(),
             created: new Date().toISOString(),
-            completions: [],
-            colorIndex: nextIndex
+            completions: []
           });
         });
       });
@@ -1253,6 +1431,8 @@
         a.click();
         URL.revokeObjectURL(url);
       });
+
+      document.getElementById('exportMonthCsvBtn').addEventListener('click', exportMonthCsv);
 
       document.getElementById('resetBtn').addEventListener('click', ()=>{
         const ok = confirm('Reset deletes habits + history on this device. Continue?');
