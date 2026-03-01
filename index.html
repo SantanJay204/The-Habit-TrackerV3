@@ -15,25 +15,21 @@
 
       --purple:#7c3aed;
       --blue:#2563eb;
-      --teal:#14b8a6;
       --green:#22c55e;
       --amber:#f59e0b;
       --red:#ef4444;
-      --pink:#ec4899;
-      --slate:#64748b;
 
       --radius:16px;
       --shadow: 0 18px 40px rgba(0,0,0,.45);
     }
 
     *{ box-sizing:border-box; }
-    html, body { height:100%; }
     body{
       margin:0;
+      min-height:100vh;
       background:var(--bg);
       color:var(--text);
       font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      overflow-x:hidden;
     }
 
     .app{
@@ -123,11 +119,6 @@
       background:var(--purple);
       color:#fff;
     }
-    .btn.danger{
-      border-color:transparent;
-      background:var(--red);
-      color:#fff;
-    }
     .btn:disabled{
       opacity:.45;
       cursor:not-allowed;
@@ -138,14 +129,6 @@
       display:grid;
       gap:14px;
       min-height:0;
-    }
-
-    /* Single page content area (we render per top tab) */
-    .page{
-      min-height:0;
-      height:100%;
-      display:grid;
-      gap:14px;
       grid-template-rows: 0.95fr 1.05fr;
     }
 
@@ -193,9 +176,10 @@
       font-weight:800;
     }
 
-    /* Habits table */
+    /* habits table */
     .table-wrap{
-      overflow:auto;
+      overflow-x:auto;
+      overflow-y:auto;
       border-radius:12px;
       border:1px solid var(--border);
       background:#0c0f19;
@@ -204,69 +188,50 @@
     }
     table{
       width:100%;
-      border-collapse:separate;
-      border-spacing:0;
-      min-width:980px;
+      min-width:840px;
+      border-collapse:collapse;
     }
     th, td{
-      border-bottom:1px solid rgba(255,255,255,.05);
+      border-right:1px solid var(--border);
+      border-bottom:1px solid var(--border);
       padding:10px;
       text-align:center;
       font-size:.92rem;
       background:#0c0f19;
-      white-space:nowrap;
     }
     th{
       position:sticky;
       top:0;
-      z-index:3;
+      z-index:2;
       background:#0f1320;
       color:#dbe1ff;
       font-size:.78rem;
       letter-spacing:.08em;
       text-transform:uppercase;
       font-weight:900;
-      border-bottom:1px solid var(--border);
     }
+    th:first-child, td:first-child{ text-align:left; }
+    th:last-child, td:last-child{ border-right:none; }
+    tr:last-child td{ border-bottom:none; }
 
-    /* Sticky first column (both weekly & monthly) */
-    th:first-child,
-    td:first-child{
+    /* Sticky first column (Habit) in scrollable table */
+    th.sticky-col, td.sticky-col{
       position:sticky;
       left:0;
-      z-index:4;
-      text-align:left;
-      background:#0f1320;
-      border-right:1px solid rgba(255,255,255,.06);
-      min-width:260px; /* wider habit column */
-      max-width:360px;
-    }
-    td:first-child{
+      z-index:3;
       background:#0c0f19;
-      z-index:2;
+    }
+    th.sticky-col{
+      z-index:4;
+      background:#0f1320;
+    }
+    td.sticky-col{
+      box-shadow: 10px 0 0 rgba(0,0,0,0); /* keeps layout stable; no visual effect */
     }
 
-    .habit-cell{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-    }
     .habit-name{
       font-weight:900;
       letter-spacing:.01em;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .cat-pill{
-      font-size:.72rem;
-      font-weight:900;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background:#11162a;
-      color:#dbe1ff;
-      flex:0 0 auto;
     }
 
     input[type="checkbox"]{
@@ -282,7 +247,7 @@
     }
     input[type="checkbox"]:checked{
       border-color:transparent;
-      background:var(--blue); /* will be overridden inline per habit */
+      background:var(--blue);
     }
     input[type="checkbox"]:checked::after{
       content:'';
@@ -303,7 +268,7 @@
       justify-content:flex-end;
     }
     .bar{
-      width:150px;
+      width:110px;
       height:10px;
       border-radius:999px;
       background:#141a2b;
@@ -313,21 +278,21 @@
     .fill{
       height:100%;
       width:0%;
-      background:var(--purple); /* overridden inline per habit */
+      background:var(--purple);
     }
     .pct{
-      min-width:62px;
+      min-width:84px;
       text-align:right;
       color:var(--muted);
       font-weight:900;
       font-size:.85rem;
     }
 
-    /* Insights layout */
+    /* bottom analytics */
     .grid{
       display:grid;
       gap:12px;
-      grid-template-columns: 1.25fr 0.75fr;
+      grid-template-columns: 1.2fr 0.8fr;
       min-height:0;
       flex:1;
     }
@@ -337,16 +302,9 @@
       grid-template-columns: repeat(3, minmax(0,1fr));
       gap:12px;
       min-height:0;
-      align-content:start;
-    }
-    .cards.scrollable{
-      overflow:auto;
-      padding-right:4px;
-      border-radius:12px;
-      min-height:0;
     }
 
-    /* Cards: visuals in .card, buttons only add behavior */
+    /* Visual styling shared by both <div class="card"> and <button class="card"> */
     .card{
       border:1px solid var(--border);
       background:#0c0f19;
@@ -359,16 +317,23 @@
       text-align:left;
       cursor:default;
     }
+
+    /* Button-only behavior */
     button.card{
       cursor:pointer;
       border:0;
       background:transparent;
+      /* padding intentionally NOT reset so .card padding applies */
       color:inherit;
       font:inherit;
     }
     button.card:focus{
       outline:2px solid var(--blue);
       outline-offset:2px;
+    }
+    button.card[disabled]{
+      cursor:default;
+      opacity:1;
     }
 
     .card-top{
@@ -382,25 +347,6 @@
       line-height:1.15;
       letter-spacing:.01em;
     }
-
-    .ring-wrap{
-      display:flex;
-      align-items:center;
-      justify-content:flex-start;
-      gap:12px;
-    }
-    .ring{
-      width:84px;
-      height:84px;
-      flex:0 0 auto;
-    }
-    .ring text{
-      font-weight:900;
-      fill:#fff;
-      font-size:10px;
-      letter-spacing:.06em;
-    }
-
     .pill{
       font-size:.75rem;
       font-weight:900;
@@ -411,6 +357,40 @@
       color:#dbe1ff;
       white-space:nowrap;
     }
+
+    .ring-wrap{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .ring{
+      width:92px;
+      height:92px;
+      flex:0 0 auto;
+    }
+    .ring text{
+      font-weight:900;
+      fill:#fff;
+      font-size:10px;
+      letter-spacing:.06em;
+    }
+
+    .stats{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      min-width:0;
+    }
+    .stat{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      color:var(--muted);
+      font-weight:900;
+      font-size:.85rem;
+    }
+    .stat b{ color:#e9ecff; }
 
     .list{
       border:1px solid var(--border);
@@ -450,11 +430,12 @@
     }
     .item small{ color:var(--muted); font-weight:900; }
 
-    /* Neglected rows are buttons */
+    /* Neglected rows are <button class="item"> — normalize button defaults */
     button.item{
       width:100%;
       cursor:pointer;
 
+      /* keep the same layout as .item */
       display:flex;
       justify-content:space-between;
       align-items:center;
@@ -481,11 +462,9 @@
       color:#fff;
       white-space:nowrap;
     }
-    .badge.ok{ background:var(--green); }
-    .badge.warn{ background:var(--amber); }
     .badge.bad{ background:var(--red); }
-    .badge.new{ background:var(--slate); }
-    .badge.streak{ background:var(--purple); }
+    .badge.warn{ background:var(--amber); }
+    .badge.ok{ background:var(--green); }
 
     .coach{
       display:flex;
@@ -522,48 +501,6 @@
     .coach-box ul{ margin:8px 0 0 18px; padding:0; }
     .coach-box li{ margin:6px 0; }
 
-    /* OVR */
-    .ovr-wrap{
-      display:grid;
-      gap:14px;
-      grid-template-columns: 1fr 1fr;
-      min-height:0;
-    }
-    .ovr-hero{
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-      min-height:0;
-    }
-    .emblem{
-      border:1px solid var(--border);
-      background:#0c0f19;
-      border-radius:20px;
-      padding:14px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      min-height:220px;
-    }
-    .emblem svg{ width:180px; height:180px; }
-    .ovr-stats{
-      border:1px solid var(--border);
-      background:#0c0f19;
-      border-radius:20px;
-      padding:14px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-    .kv{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      color:var(--muted);
-      font-weight:900;
-    }
-    .kv b{ color:#e9ecff; }
-
     footer{
       padding:14px;
       display:flex;
@@ -575,16 +512,15 @@
     .foot-note{ color:var(--muted); font-size:.82rem; font-weight:800; }
 
     @media (max-width: 980px){
-      .page{ grid-template-rows:auto auto; }
+      main{ grid-template-rows:auto auto; }
       .grid{ grid-template-columns:1fr; }
       .cards{ grid-template-columns:1fr; }
-      .ovr-wrap{ grid-template-columns:1fr; }
-      table{ min-width:860px; }
-      th:first-child, td:first-child{ min-width:220px; }
     }
 
     /* Expand-to-full system */
     body[data-expanded] { overflow: hidden; }
+
+    /* Dim backdrop in fullscreen (solid, no gradient) */
     body[data-expanded]::before{
       content:"";
       position:fixed;
@@ -593,110 +529,40 @@
       opacity:.88;
       z-index:9998;
     }
+
+    .section { min-height: 0; }
+
     .section .section-body{
       min-height:0;
       overflow:auto;
       padding-top:2px;
       flex: 1 1 auto;
     }
-    body[data-expanded="ops"] #insightsSection,
-    body[data-expanded="insights"] #opsSection { display:none; }
-    body[data-expanded] #opsSection,
-    body[data-expanded] #insightsSection{
-      position:fixed;
-      inset:14px;
-      z-index:9999;
-      border-radius:var(--radius);
-      background:var(--panel2);
-      border:1px solid var(--border);
-      box-shadow:var(--shadow);
-    }
-    [data-close]{ display:none; }
-    body[data-expanded] [data-close]{ display:inline-flex !important; }
-    body[data-expanded] [data-expand]{ display:none !important; }
 
-    /* Modal (Add/Edit) */
-    body[data-modal] { overflow:hidden; }
-    .modal-backdrop{
-      position:fixed;
-      inset:0;
-      background:#070912;
-      opacity:.88;
-      z-index:10000;
-      display:none;
+    /* Fullscreen state */
+    body[data-expanded="ops"] #insightsSection,
+    body[data-expanded="insights"] #opsSection {
+      display: none;
     }
-    body[data-modal] .modal-backdrop{ display:block; }
-    .modal{
-      position:fixed;
-      inset:14px;
-      z-index:10001;
-      border-radius:var(--radius);
-      background:var(--panel2);
-      border:1px solid var(--border);
-      box-shadow:var(--shadow);
-      display:none;
-      padding:14px;
+
+    body[data-expanded] #opsSection,
+    body[data-expanded] #insightsSection {
+      position: fixed;
+      inset: 14px;
+      z-index: 9999;
+      border-radius: var(--radius);
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
     }
-    body[data-modal] .modal{ display:flex; flex-direction:column; gap:12px; min-height:0; }
-    .modal-head{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-end;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .modal-title{
-      margin:0;
-      font-size:.88rem;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      font-weight:900;
-      color:#e9ecff;
-    }
-    .modal-body{
-      border:1px solid var(--border);
-      background:#0c0f19;
-      border-radius:16px;
-      padding:12px;
-      min-height:0;
-      display:grid;
-      gap:12px;
-    }
-    .field{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
-    .label{
-      color:var(--muted);
-      font-weight:900;
-      font-size:.82rem;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-    }
-    .input, .select{
-      border:1px solid var(--border);
-      background:#0f1320;
-      color:var(--text);
-      border-radius:12px;
-      padding:10px 12px;
-      font-weight:900;
-      outline:none;
-    }
-    .row{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
-    }
-    @media (max-width: 720px){
-      .row{ grid-template-columns:1fr; }
-    }
-    .modal-actions{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-    }
+
+    /* Close visibility: CSS controls only */
+    [data-close]{ display:none; }
+    [data-close][hidden]{ display:none; }
+    body[data-expanded] [data-close]{ display:inline-flex !important; }
+
+    /* Expand visibility */
+    body[data-expanded] [data-expand] { display: none !important; }
   </style>
 </head>
 <body>
@@ -708,18 +574,12 @@
       </div>
 
       <div class="controls">
-        <nav class="tabs" aria-label="Top Tabs">
-          <button class="tab active" data-tab="habits">Habits</button>
-          <button class="tab" data-tab="insights">Insights</button>
-          <button class="tab" data-tab="ovr">OVR</button>
-        </nav>
-
         <nav class="tabs" aria-label="View Switcher">
           <button class="tab active" data-view="weekly">Weekly</button>
           <button class="tab" data-view="monthly">Monthly</button>
         </nav>
-
-        <button class="btn" id="exportBtn" title="Export full state as JSON">Export</button>
+        <button class="btn" id="exportBtn" title="Export data as JSON">Export</button>
+        <button class="btn" id="askAiBtn" title="Requires backend (disabled for now)" disabled>Ask AI</button>
         <button class="btn primary" id="addHabitBtn">+ Habit</button>
       </div>
     </header>
@@ -732,113 +592,12 @@
     </footer>
   </div>
 
-  <!-- Modal -->
-  <div class="modal-backdrop" aria-hidden="true"></div>
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="modal-head">
-      <div>
-        <h2 class="modal-title" id="modalTitle">Add Habit</h2>
-        <div class="section-sub" id="modalSub">Fast + clean. Name required.</div>
-      </div>
-      <div style="display:flex; gap:10px; align-items:center;">
-        <button class="btn" type="button" data-modal-close>Close (Esc)</button>
-      </div>
-    </div>
-
-    <div class="modal-body">
-      <div class="row">
-        <div class="field">
-          <div class="label">Habit name</div>
-          <input class="input" id="habitName" autocomplete="off" placeholder="e.g., Read 10 pages" />
-        </div>
-        <div class="field">
-          <div class="label">Category</div>
-          <select class="select" id="habitCat">
-            <option value="body">Body</option>
-            <option value="mind">Mind</option>
-            <option value="order">Order</option>
-            <option value="craft">Craft</option>
-            <option value="money">Money</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="field">
-          <div class="label">Color</div>
-          <select class="select" id="habitColor"></select>
-        </div>
-        <div class="field">
-          <div class="label">Preview</div>
-          <div class="card" id="habitPreview" style="padding:12px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
-              <div style="font-weight:900" id="previewName">Habit</div>
-              <div class="pill" id="previewCat">Category</div>
-            </div>
-            <div class="progress">
-              <div class="bar"><div class="fill" id="previewFill" style="width:60%"></div></div>
-              <div class="pct">60%</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal-actions">
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <button class="btn danger" type="button" id="deleteHabitBtn" style="display:none;">Delete</button>
-      </div>
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <button class="btn" type="button" data-modal-cancel>Cancel</button>
-        <button class="btn primary" type="button" id="saveHabitBtn">Save</button>
-      </div>
-    </div>
-  </div>
-
   <script>
-    // ========= Palette (24 solid colors) =========
-    const COLOR_POOL = [
-      {name:'Purple', value:'#7c3aed'},
-      {name:'Blue', value:'#2563eb'},
-      {name:'Teal', value:'#14b8a6'},
-      {name:'Green', value:'#22c55e'},
-      {name:'Amber', value:'#f59e0b'},
-      {name:'Red', value:'#ef4444'},
-      {name:'Pink', value:'#ec4899'},
-      {name:'Slate', value:'#64748b'},
-
-      {name:'Indigo', value:'#4f46e5'},
-      {name:'Cyan', value:'#06b6d4'},
-      {name:'Lime', value:'#84cc16'},
-      {name:'Orange', value:'#f97316'},
-      {name:'Rose', value:'#f43f5e'},
-      {name:'Violet', value:'#8b5cf6'},
-      {name:'Sky', value:'#0ea5e9'},
-      {name:'Emerald', value:'#10b981'},
-
-      {name:'Yellow', value:'#eab308'},
-      {name:'Stone', value:'#78716c'},
-      {name:'Fuchsia', value:'#d946ef'},
-      {name:'Mint', value:'#34d399'},
-      {name:'Azure', value:'#3b82f6'},
-      {name:'Coral', value:'#fb7185'},
-      {name:'Olive', value:'#65a30d'},
-      {name:'Brick', value:'#dc2626'}
-    ];
-
     // ========= State =========
-    const STORAGE_KEY = 'habit-tracker-stack-v1_1';
-    const appState = load() || {
-      ui: { tab:'habits', activeView:'weekly', weekOffset:0, monthOffset:0 },
-      habits: []
-    };
-
-    let insightsDetailHabitId = null; // future: per-habit detail
-    let lastFocus = null;
-
-    // Modal state
-    let modalMode = 'add'; // 'add' | 'edit'
-    let modalHabitId = null;
+    const STORAGE_KEY = 'habit-tracker-solid-coach-v1';
+    const appState = load() || { habits: [] };
+    let activeView = 'weekly';
+    let insightsDetailHabitId = null;
 
     function load(){
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -846,12 +605,9 @@
       try{
         const parsed = JSON.parse(raw);
         if(!parsed || !Array.isArray(parsed.habits)) return null;
-        if(!parsed.ui) parsed.ui = { tab:'habits', activeView:'weekly', weekOffset:0, monthOffset:0 };
         parsed.habits = parsed.habits.map(h => ({
           id: String(h.id || crypto.randomUUID()),
           name: String(h.name || 'Untitled Habit'),
-          category: String(h.category || 'mind'),
-          color: String(h.color || pickNextColor(parsed.habits).value),
           created: h.created || new Date().toISOString(),
           completions: Array.isArray(h.completions) ? h.completions : []
         }));
@@ -875,9 +631,7 @@
       return `${y}-${m}-${d}`;
     }
 
-    function weekForOffset(weekOffset = 0){
-      const ref = new Date();
-      ref.setDate(ref.getDate() + (weekOffset*7));
+    function isoWeek(ref = new Date()){
       const base = new Date(ref);
       const day = base.getDay();
       const shift = day === 0 ? -6 : 1 - day;
@@ -890,19 +644,11 @@
       });
     }
 
-    function monthDaysForOffset(monthOffset = 0){
-      const now = new Date();
-      const y = now.getFullYear();
-      const m = now.getMonth() + monthOffset;
-      const first = new Date(y, m, 1);
-      const count = new Date(first.getFullYear(), first.getMonth()+1, 0).getDate();
-      return Array.from({length:count}, (_,i)=> new Date(first.getFullYear(), first.getMonth(), i+1));
-    }
-
-    function monthTitle(monthOffset = 0){
-      const now = new Date();
-      const d = new Date(now.getFullYear(), now.getMonth()+monthOffset, 1);
-      return d.toLocaleString(undefined, {month:'long', year:'numeric'});
+    function monthDays(ref = new Date()){
+      const y = ref.getFullYear();
+      const m = ref.getMonth();
+      const count = new Date(y, m+1, 0).getDate();
+      return Array.from({length:count}, (_,i)=> new Date(y, m, i+1));
     }
 
     // ========= Habit logic =========
@@ -930,11 +676,6 @@
       return Math.floor((today - lastDate) / (1000*60*60*24));
     }
 
-    function lastDoneDate(habit){
-      if(!habit.completions.length) return null;
-      return habit.completions[habit.completions.length - 1];
-    }
-
     function currentStreak(habit){
       const today = new Date(); today.setHours(0,0,0,0);
       let streak = 0;
@@ -947,36 +688,11 @@
       return streak;
     }
 
-    function sortHabits(habits){
-      const catOrder = { body:0, mind:1, order:2, craft:3, money:4 };
-      return [...habits].sort((a,b)=>{
-        const ca = catOrder[a.category] ?? 99;
-        const cb = catOrder[b.category] ?? 99;
-        if(ca !== cb) return ca - cb;
-        return a.name.localeCompare(b.name);
-      });
-    }
-
-    // ========= Colors =========
-    function pickNextColor(existingHabits){
-      const used = new Set((existingHabits||[]).map(h=>h.color));
-      const next = COLOR_POOL.find(c=>!used.has(c.value)) || COLOR_POOL[existingHabits.length % COLOR_POOL.length];
-      return next;
-    }
-
-    function statusColorByPct(pct){
-      if(pct < 25) return getVar('--red');
-      if(pct < 50) return getVar('--amber');
-      return getVar('--green');
-    }
-    function getVar(name){
-      return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-    }
-
-    // ========= Coach (less generic, data-driven) =========
+    // ========= Coach =========
     function coachInsights(){
-      const m = monthDaysForOffset(appState.ui.monthOffset);
-      const w = weekForOffset(appState.ui.weekOffset);
+      const now = new Date();
+      const w = isoWeek(now);
+      const m = monthDays(now);
       const daysInMonth = m.length;
 
       const ranked = appState.habits.map(h=>{
@@ -987,128 +703,54 @@
         const weekPct = Math.round((weekDone/7)*100);
         const monthPct = Math.round((monthDone/daysInMonth)*100);
 
-        // risk: recency + low weekly execution
         const risk =
-          (since === Infinity ? 70 : Math.min(70, since*8)) +
-          (weekPct < 15 ? 25 : weekPct < 40 ? 15 : weekPct < 60 ? 8 : 0) +
+          (since === Infinity ? 50 : Math.min(50, since*6)) +
+          (weekPct < 30 ? 20 : weekPct < 60 ? 10 : 0) +
           (streak >= 3 ? -10 : 0);
 
         return { h, weekDone, weekPct, monthDone, monthPct, since, streak, risk };
       }).sort((a,b)=> b.risk - a.risk);
 
+      const topNeglected = ranked.slice(0, Math.min(3, ranked.length));
+      const topWinners = [...ranked].sort((a,b)=> b.weekPct - a.weekPct).slice(0, Math.min(2, ranked.length));
+
+      const todayKey = key(new Date());
+      const notDoneToday = ranked.filter(r => !done(r.h, todayKey)).slice(0, 3);
+
       if(!appState.habits.length){
         return {
           headline: "Add 1 habit. Keep it small.",
-          bullets: [
-            "Start with one habit you can do in 5 minutes.",
-            "Consistency beats intensity."
-          ]
+          bullets: ["Start with one habit you can do in 5 minutes.", "Consistency beats intensity."]
         };
       }
 
-      const todayKey = key(new Date());
-      const notDoneToday = ranked.filter(r => !done(r.h, todayKey));
-
-      const worst = ranked[0];
-      const best = [...ranked].sort((a,b)=> b.weekPct - a.weekPct)[0];
-
-      const headline =
-        worst.since === Infinity
-          ? `Highest risk: "${worst.h.name}" is NEW — do the first rep today.`
-          : worst.since >= 7
-            ? `Highest risk: "${worst.h.name}" is NEGLECTED (${worst.since} days since last).`
-            : worst.since >= 3
-              ? `Highest risk: "${worst.h.name}" is SLIPPING (${worst.since} days since last).`
-              : `Stability looks decent. Lock in today’s reps.`;
+      const messages = [];
+      const worst = topNeglected[0];
+      if(worst && worst.since >= 3){
+        messages.push(`Priority risk: "${worst.h.name}" is slipping (${worst.since === Infinity ? 'never done' : worst.since + ' days since last'}).`);
+      } else {
+        messages.push(`You’re not in trouble. Keep the loop tight today.`);
+      }
 
       const bullets = [];
 
-      // Today targets: prioritize 1–3 habits not done today, biased by risk + categories
-      const todayTargets = notDoneToday.slice(0,3).map(x=>`"${x.h.name}"`).join(', ');
-      if(todayTargets) bullets.push(`Today: do ${todayTargets}.`);
-
-      // Shrink rule: if missed 2+ days, reduce
-      const shrinkList = ranked.filter(r=>r.since >= 2 && r.since !== Infinity).slice(0,2);
-      if(shrinkList.length){
-        bullets.push(`Shrink-to-win: ${shrinkList.map(r=>`"${r.h.name}"`).join(', ')} — make it impossible to fail (2 minutes).`);
+      if(notDoneToday.length){
+        bullets.push(`Do these today (pick 1–3): ${notDoneToday.map(x=>`"${x.h.name}"`).join(', ')}.`);
       }
-
-      // Protect momentum: best performer
-      if(best){
-        bullets.push(`Protect momentum: "${best.h.name}" is leading this week. Don’t break the chain.`);
+      if(topNeglected.length){
+        bullets.push(`Neglect list: ${topNeglected.map(x=>`"${x.h.name}"`).join(', ')}.`);
       }
+      if(topWinners.length){
+        bullets.push(`What’s working: ${topWinners.map(x=>`"${x.h.name}"`).join(', ')}. Protect that momentum.`);
+      }
+      bullets.push(`Rule: if a habit is missed 2+ days, shrink it until it’s impossible to fail.`);
 
-      // Quick system note
-      bullets.push(`Rule: miss 2+ days → reduce effort, keep frequency.`);
-
-      return { headline, bullets };
-    }
-
-    // ========= OVR / Rank =========
-    const RANKS = [
-      { tier:'Wood',   color:'#8b5a2b' },
-      { tier:'Steel',  color:'#6b7280' },
-      { tier:'Bronze', color:'#b45309' },
-      { tier:'Silver', color:'#9ca3af' },
-      { tier:'Gold',   color:'#eab308' },
-      { tier:'Platinum', color:'#60a5fa' },
-      { tier:'Emerald', color:'#22c55e' }
-    ];
-
-    function overallScore(){
-      if(!appState.habits.length) return 0;
-
-      const m = monthDaysForOffset(appState.ui.monthOffset);
-      const daysInMonth = m.length;
-
-      // completion score: average month completion across habits
-      const monthPcts = appState.habits.map(h=>{
-        const monthDone = countInRange(h, m);
-        return (monthDone / daysInMonth) * 100;
-      });
-      const avgMonth = monthPcts.reduce((a,b)=>a+b,0) / monthPcts.length;
-
-      // streak bonus: average streak capped
-      const streaks = appState.habits.map(h=>Math.min(14, currentStreak(h)));
-      const avgStreak = streaks.reduce((a,b)=>a+b,0) / streaks.length;
-
-      // score 0–100
-      const score = Math.max(0, Math.min(100, (avgMonth * 0.85) + (avgStreak * 1.1)));
-      return Math.round(score);
-    }
-
-    function rankFromScore(score){
-      // 7 tiers * 3 divisions = 21 steps
-      const steps = 21;
-      const idx = Math.max(0, Math.min(steps-1, Math.floor((score/100) * steps)));
-      const tierIndex = Math.floor(idx / 3);
-      const div = 3 - (idx % 3);
-      const tier = RANKS[tierIndex] || RANKS[0];
-      return { ...tier, div, idx };
-    }
-
-    function emblemSVG(tier, color){
-      // Simple “badge” look (solid fills only). Emerald gets wings.
-      const wing = tier === 'Emerald'
-        ? `<path d="M18 60 C 6 54, 6 40, 18 36 C 18 44, 22 52, 30 56 Z" fill="${color}" opacity="1"/>
-           <path d="M162 60 C 174 54, 174 40, 162 36 C 162 44, 158 52, 150 56 Z" fill="${color}" opacity="1"/>`
-        : '';
-      return `
-        <svg viewBox="0 0 180 180" aria-hidden="true">
-          ${wing}
-          <path d="M90 18 L140 42 L156 96 L90 162 L24 96 L40 42 Z" fill="#0f1320" stroke="${color}" stroke-width="6"/>
-          <circle cx="90" cy="88" r="44" fill="${color}" opacity="0.18"/>
-          <circle cx="90" cy="88" r="32" fill="${color}" opacity="0.28"/>
-          <path d="M90 52 L116 66 L116 98 C116 118 104 134 90 140 C76 134 64 118 64 98 L64 66 Z" fill="${color}" opacity="0.95"/>
-          <circle cx="90" cy="88" r="10" fill="#0b0d12" opacity="0.8"/>
-        </svg>
-      `;
+      return { headline: messages[0], bullets };
     }
 
     // ========= Rendering =========
     function esc(s){
-      return String(s)
-        .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
+      return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
         .replaceAll('"','&quot;').replaceAll("'",'&#39;');
     }
 
@@ -1128,7 +770,7 @@
     }
 
     function ringSVG(percent, color){
-      const size=84, r=32, cx=size/2, cy=size/2;
+      const size=92, r=36, cx=size/2, cy=size/2;
       const c=2*Math.PI*r;
       const p=Math.max(0, Math.min(100, percent));
       const off=c*(1-p/100);
@@ -1145,94 +787,74 @@
       `;
     }
 
-    function neglectedBadge(since){
-      if(since === Infinity) return { cls:'new', label:'NEW' };
-      if(since >= 7) return { cls:'bad', label:'NEGLECTED' };
-      if(since >= 3) return { cls:'warn', label:'SLIPPING' };
-      return { cls:'ok', label:'ON TRACK' };
+    function badge(days){
+      if(days === Infinity) return {cls:'bad', label:'Never'};
+      if(days >= 7) return {cls:'bad', label:`${days}d`};
+      if(days >= 3) return {cls:'warn', label:`${days}d`};
+      return {cls:'ok', label:`${days}d`};
     }
 
     function render(){
       setMeta();
       const shell = document.getElementById('mainShell');
       shell.innerHTML = '';
-      shell.appendChild(renderPage());
+      shell.appendChild(renderDashboard());
       bindDynamic(shell);
-      syncTopControls();
     }
 
-    function syncTopControls(){
-      document.querySelectorAll('.tab[data-tab]').forEach(t=>{
-        t.classList.toggle('active', t.dataset.tab === appState.ui.tab);
-      });
-      document.querySelectorAll('.tab[data-view]').forEach(t=>{
-        t.classList.toggle('active', t.dataset.view === appState.ui.activeView);
-      });
-    }
-
-    function renderPage(){
+    function renderDashboard(){
       const wrap = document.createElement('div');
-      wrap.className = 'page';
+      wrap.style.display='grid';
+      wrap.style.gap='14px';
+      wrap.style.height='100%';
+      wrap.style.minHeight='0';
+      wrap.style.gridTemplateRows='0.95fr 1.05fr';
 
-      if(appState.ui.tab === 'ovr'){
-        wrap.style.gridTemplateRows = '1fr';
-        wrap.appendChild(renderOVR());
-        return wrap;
-      }
-
-      // Habits + Insights are stacked as Operations + Insights
       const ops = document.createElement('section');
       ops.className='section';
       ops.id='opsSection';
-      ops.appendChild(renderOpsHeader());
+
+      const opsHead = renderHabitsHeader();
       const opsBody = document.createElement('div');
       opsBody.className='section-body';
-      opsBody.appendChild(renderOpsBody());
+      opsBody.appendChild(renderHabitsBody());
+
+      ops.appendChild(opsHead);
       ops.appendChild(opsBody);
 
       const insights = document.createElement('section');
       insights.className='section';
       insights.id='insightsSection';
-      insights.appendChild(renderInsightsHeader());
+
+      const insHead = renderInsightsHeader();
       const insBody = document.createElement('div');
       insBody.className='section-body';
-      insBody.appendChild(renderInsightsBody());
+      insBody.appendChild(renderAnalyticsBody());
+
+      insights.appendChild(insHead);
       insights.appendChild(insBody);
 
-      if(appState.ui.tab === 'habits'){
-        wrap.appendChild(ops);
-        wrap.appendChild(insights);
-      } else {
-        // Insights tab: still show ops (smaller) + insights (bigger) for flow
-        wrap.appendChild(ops);
-        wrap.appendChild(insights);
-      }
-
+      wrap.appendChild(ops);
+      wrap.appendChild(insights);
       return wrap;
     }
 
-    function renderOpsHeader(){
+    function renderHabitsHeader(){
+      const weekDates = isoWeek();
+      const start = weekDates[0].toLocaleDateString();
+      const end = weekDates[6].toLocaleDateString();
+      const label = activeView === 'weekly'
+        ? `Week (Mon–Sun): ${start} → ${end}`
+        : `Month: ${new Date().toLocaleString(undefined, {month:'long', year:'numeric'})}`;
+
       const head = document.createElement('div');
-      head.className='section-head';
-
-      const viewLabel = appState.ui.activeView === 'weekly'
-        ? (() => {
-            const wd = weekForOffset(appState.ui.weekOffset);
-            return `Week (Mon–Sun): ${wd[0].toLocaleDateString()} → ${wd[6].toLocaleDateString()}`;
-          })()
-        : `Month: ${monthTitle(appState.ui.monthOffset)}`;
-
+      head.className = 'section-head';
       head.innerHTML = `
         <div>
-          <h2 class="section-title">Operations</h2>
-          <p class="section-sub">${esc(viewLabel)} • Click a habit name to edit</p>
+          <h2 class="section-title">Habits</h2>
+          <p class="section-sub">${esc(label)}</p>
         </div>
-        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-          <div style="display:flex; gap:6px; align-items:center;">
-            <button class="btn" type="button" data-nav="prev">Prev</button>
-            <button class="btn" type="button" data-nav="today">Today</button>
-            <button class="btn" type="button" data-nav="next">Next</button>
-          </div>
+        <div style="display:flex; gap:10px; align-items:center;">
           <button class="btn" data-expand="ops" aria-label="Expand Operations">Expand</button>
           <button class="btn" data-close aria-label="Close Fullscreen">Close (Esc)</button>
         </div>
@@ -1240,60 +862,49 @@
       return head;
     }
 
-    function renderOpsBody(){
+    function renderHabitsBody(){
+      const container = document.createElement('div');
+
       if(!appState.habits.length){
-        const c = document.createElement('div');
         const e = document.createElement('div');
         e.className='empty';
         e.textContent='No habits yet. Click “+ Habit”.';
-        c.appendChild(e);
-        return c;
+        container.appendChild(e);
+        return container;
       }
 
-      const habits = sortHabits(appState.habits);
-      const container = document.createElement('div');
       const tableWrap = document.createElement('div');
       tableWrap.className='table-wrap';
 
       const table = document.createElement('table');
       const thead = document.createElement('thead');
-      const trh = document.createElement('tr');
+      const hr = document.createElement('tr');
 
-      if(appState.ui.activeView === 'weekly'){
-        const weekDates = weekForOffset(appState.ui.weekOffset);
-        trh.innerHTML = `<th>Habit</th>${['M','T','W','T','F','S','S'].map(d=>`<th>${d}</th>`).join('')}<th>Progress</th>`;
-        thead.appendChild(trh);
+      if(activeView === 'weekly'){
+        const weekDates = isoWeek();
+        hr.innerHTML = `<th class="sticky-col">Habit</th>${['M','T','W','T','F','S','S'].map(d=>`<th>${d}</th>`).join('')}<th>Progress</th>`;
+        thead.appendChild(hr);
 
         const tbody = document.createElement('tbody');
-        habits.forEach(h=>{
+        appState.habits.forEach(h=>{
           const tr = document.createElement('tr');
-
           const doneCount = countInRange(h, weekDates);
           const pct = Math.round((doneCount/7)*100);
 
-          let row = `
-            <td>
-              <div class="habit-cell" data-edit-habit="${h.id}" role="button" tabindex="0" aria-label="Edit ${esc(h.name)}">
-                <div class="habit-name">${esc(h.name)}</div>
-                <span class="cat-pill">${esc(h.category.toUpperCase())}</span>
-              </div>
-            </td>`;
-
+          let row = `<td class="sticky-col"><div class="habit-name">${esc(h.name)}</div></td>`;
           weekDates.forEach(d=>{
             const dk = key(d);
             const checked = done(h, dk) ? 'checked' : '';
-            row += `<td><input type="checkbox" data-habit-id="${h.id}" data-date="${dk}" ${checked} aria-label="${esc(h.name)} ${dk}" style="${checked ? `background:${h.color};` : ''}"></td>`;
+            row += `<td><input type="checkbox" data-habit-id="${h.id}" data-date="${dk}" ${checked} aria-label="${esc(h.name)} ${dk}"></td>`;
           });
 
           row += `
             <td>
               <div class="progress">
-                <div class="bar"><div class="fill" style="width:${pct}%; background:${h.color};"></div></div>
+                <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
                 <div class="pct">${pct}%</div>
               </div>
-            </td>
-          `;
-
+            </td>`;
           tr.innerHTML = row;
           tbody.appendChild(tr);
         });
@@ -1301,44 +912,38 @@
         table.appendChild(thead);
         table.appendChild(tbody);
       } else {
-        const md = monthDaysForOffset(appState.ui.monthOffset);
+        // Force monthly to be wide enough to scroll horizontally
+        table.style.minWidth = '1850px';
+
+        const now = new Date();
+        const md = monthDays(now);
         const daysInMonth = md.length;
 
-        trh.innerHTML = `<th>Habit</th>${Array.from({length:31}, (_,i)=>`<th>${i+1}</th>`).join('')}<th>Progress</th>`;
-        thead.appendChild(trh);
+        hr.innerHTML = `<th class="sticky-col">Habit</th>${Array.from({length:31}, (_,i)=>`<th>${i+1}</th>`).join('')}<th>Progress</th>`;
+        thead.appendChild(hr);
 
         const tbody = document.createElement('tbody');
-        habits.forEach(h=>{
+        appState.habits.forEach(h=>{
           const tr = document.createElement('tr');
-
           const doneCount = countInRange(h, md);
           const pct = Math.round((doneCount/daysInMonth)*100);
 
-          let row = `
-            <td>
-              <div class="habit-cell" data-edit-habit="${h.id}" role="button" tabindex="0" aria-label="Edit ${esc(h.name)}">
-                <div class="habit-name">${esc(h.name)}</div>
-                <span class="cat-pill">${esc(h.category.toUpperCase())}</span>
-              </div>
-            </td>`;
-
+          let row = `<td class="sticky-col"><div class="habit-name">${esc(h.name)}</div></td>`;
           for(let day=1; day<=31; day++){
             const date = md[day-1];
             if(!date){ row += `<td style="opacity:.35">—</td>`; continue; }
             const dk = key(date);
             const checked = done(h, dk) ? 'checked' : '';
-            row += `<td><input type="checkbox" data-habit-id="${h.id}" data-date="${dk}" ${checked} aria-label="${esc(h.name)} ${dk}" style="${checked ? `background:${h.color};` : ''}"></td>`;
+            row += `<td><input type="checkbox" data-habit-id="${h.id}" data-date="${dk}" ${checked} aria-label="${esc(h.name)} ${dk}"></td>`;
           }
 
           row += `
             <td>
               <div class="progress">
-                <div class="bar"><div class="fill" style="width:${pct}%; background:${h.color};"></div></div>
+                <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
                 <div class="pct">${pct}%</div>
               </div>
-            </td>
-          `;
-
+            </td>`;
           tr.innerHTML = row;
           tbody.appendChild(tr);
         });
@@ -1354,11 +959,11 @@
 
     function renderInsightsHeader(){
       const head = document.createElement('div');
-      head.className='section-head';
+      head.className = 'section-head';
       head.innerHTML = `
         <div>
           <h2 class="section-title">Insights</h2>
-          <p class="section-sub">Minimal signals. No fluff.</p>
+          <p class="section-sub">Real-time signals based on what you’re actually doing.</p>
         </div>
         <div style="display:flex; gap:10px; align-items:center;">
           <button class="btn" data-expand="insights" aria-label="Expand Insights">Expand</button>
@@ -1368,7 +973,7 @@
       return head;
     }
 
-    function renderInsightsBody(){
+    function renderAnalyticsBody(){
       const container = document.createElement('div');
 
       if(!appState.habits.length){
@@ -1379,40 +984,52 @@
         return container;
       }
 
-      const md = monthDaysForOffset(appState.ui.monthOffset);
-      const daysInMonth = md.length;
+      if (insightsDetailHabitId) {
+        return renderHabitDetail(insightsDetailHabitId);
+      }
 
-      const ranked = sortHabits(appState.habits).map(h=>{
-        const monthDone = countInRange(h, md);
+      const now = new Date();
+      const w = isoWeek(now);
+      const m = monthDays(now);
+      const daysInMonth = m.length;
+
+      const ranked = appState.habits.map((h, idx)=>{
+        const weekDone = countInRange(h, w);
+        const monthDone = countInRange(h, m);
+        const weekPct = Math.round((weekDone/7)*100);
         const monthPct = Math.round((monthDone/daysInMonth)*100);
         const since = lastDoneDaysAgo(h);
         const streak = currentStreak(h);
-        return { h, monthDone, monthPct, since, streak };
+        return { h, weekDone, weekPct, monthDone, monthPct, since, streak, idx };
       });
+
+      const cardsData = [...ranked].sort((a,b)=> b.monthPct - a.monthPct).slice(0, 6);
+      const neglected = [...ranked].sort((a,b)=> (b.since - a.since)).slice(0, 10);
 
       const grid = document.createElement('div');
       grid.className='grid';
 
-      // Cards: show ALL habits (scroll inside)
-      const cardsWrap = document.createElement('div');
-      cardsWrap.className='cards scrollable';
-      ranked.forEach((r)=>{
-        const ringColor = statusColorByPct(r.monthPct);
+      const cards = document.createElement('div');
+      cards.className='cards';
+      cardsData.forEach((r, i)=>{
+        const color = (i % 2 === 0) ? 'var(--purple)' : 'var(--blue)';
+
         const card = document.createElement('button');
-        card.type='button';
+        card.type = 'button';
         card.className='card';
         card.setAttribute('data-open-habit', r.h.id);
-        card.setAttribute('aria-label', `Open ${r.h.name}`);
+        card.setAttribute('aria-label', `Open details for ${r.h.name}`);
+
         card.innerHTML = `
           <div class="card-top">
             <div class="card-name">${esc(r.h.name)}</div>
-            <div class="pill">${esc(r.h.category.toUpperCase())}</div>
+            <div class="pill">${r.monthPct}%</div>
           </div>
           <div class="ring-wrap">
-            ${ringSVG(r.monthPct, ringColor)}
+            ${ringSVG(r.monthPct, color)}
           </div>
         `;
-        cardsWrap.appendChild(card);
+        cards.appendChild(card);
       });
 
       const right = document.createElement('div');
@@ -1421,14 +1038,13 @@
       right.style.gap='12px';
       right.style.minHeight='0';
 
-      // Coach (data-driven)
       const coachData = coachInsights();
       const coach = document.createElement('div');
       coach.className='coach';
       coach.innerHTML = `
         <div class="coach-head">
           <h3 class="coach-title">Coach</h3>
-          <span class="pill">Live</span>
+          <span class="pill">Auto-analysis</span>
         </div>
         <div class="coach-box">
           <div style="font-weight:900">${esc(coachData.headline)}</div>
@@ -1436,28 +1052,22 @@
         </div>
       `;
 
-      // Neglected (clear meaning: days since last completion)
-      const neglected = [...ranked].sort((a,b)=> (b.since - a.since)).slice(0, 12);
       const list = document.createElement('div');
       list.className='list';
       list.innerHTML = `<h3>Neglected</h3><div class="items"></div>`;
       const items = list.querySelector('.items');
 
       neglected.forEach(r=>{
-        const b = neglectedBadge(r.since);
-        const last = lastDoneDate(r.h);
-        const sub = (r.since === Infinity)
-          ? `Never completed`
-          : `${r.since} day(s) since last • Last: ${last}`;
+        const b = badge(r.since);
         const item = document.createElement('button');
-        item.type='button';
+        item.type = 'button';
         item.className='item';
         item.setAttribute('data-open-habit', r.h.id);
         item.setAttribute('aria-label', `Open details for ${r.h.name}`);
         item.innerHTML = `
           <div>
             <div style="font-weight:900">${esc(r.h.name)}</div>
-            <small>${esc(sub)}</small>
+            <small>${r.since === Infinity ? 'Never completed' : `${r.since} days since last completion`}</small>
           </div>
           <div class="badge ${b.cls}">${b.label}</div>
         `;
@@ -1467,133 +1077,163 @@
       right.appendChild(coach);
       right.appendChild(list);
 
-      grid.appendChild(cardsWrap);
+      grid.appendChild(cards);
       grid.appendChild(right);
 
       container.appendChild(grid);
       return container;
     }
 
-    function renderOVR(){
-      const wrap = document.createElement('section');
-      wrap.className='section';
-      wrap.id='ovrSection';
+    function renderHabitDetail(habitId){
+      const h = appState.habits.find(x => x.id === habitId);
+      const container = document.createElement('div');
 
-      const score = overallScore();
-      const r = rankFromScore(score);
+      if(!h){
+        container.className='empty';
+        container.textContent='Habit not found.';
+        return container;
+      }
 
-      wrap.innerHTML = `
+      const now = new Date();
+      const w = isoWeek(now);
+      const m = monthDays(now);
+      const daysInMonth = m.length;
+
+      const weekDone = countInRange(h, w);
+      const monthDone = countInRange(h, m);
+      const weekPct = Math.round((weekDone/7)*100);
+      const monthPct = Math.round((monthDone/daysInMonth)*100);
+      const since = lastDoneDaysAgo(h);
+      const streak = currentStreak(h);
+
+      const today = new Date(); today.setHours(0,0,0,0);
+      const last14 = Array.from({length:14}, (_,i)=>{
+        const d = new Date(today);
+        d.setDate(today.getDate() - (13 - i));
+        return d;
+      });
+
+      container.innerHTML = `
         <div class="section-head">
           <div>
-            <h2 class="section-title">OVR</h2>
-            <p class="section-sub">Monthly performance, gamified. Earn it.</p>
+            <h2 class="section-title">${esc(h.name)} • Detail</h2>
+            <p class="section-sub">Deep view of consistency and recency.</p>
           </div>
-          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-            <button class="btn" type="button" data-export-month>Export Month CSV</button>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <button class="btn" data-detail-close type="button">Back</button>
+            <button class="btn" data-close aria-label="Close Fullscreen">Close (Esc)</button>
           </div>
         </div>
 
-        <div class="section-body">
-          <div class="ovr-wrap">
-            <div class="ovr-hero">
-              <div class="emblem">
-                ${emblemSVG(r.tier, r.color)}
+        <div class="grid" style="grid-template-columns: 1fr 0.9fr;">
+          <div class="cards" style="grid-template-columns: repeat(2, minmax(0,1fr));">
+            <div class="card">
+              <div class="card-top">
+                <div class="card-name">Monthly</div>
+                <div class="pill">${monthPct}%</div>
               </div>
-              <div class="ovr-stats">
-                <div class="kv"><span>Rank</span><b>${esc(r.tier)} ${r.div}</b></div>
-                <div class="kv"><span>OVR</span><b>${score}</b></div>
-                <div class="kv"><span>Month</span><b>${esc(monthTitle(appState.ui.monthOffset))}</b></div>
-                <div class="kv"><span>Habits</span><b>${appState.habits.length}</b></div>
+              <div class="ring-wrap">
+                ${ringSVG(monthPct, 'var(--purple)')}
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-top">
+                <div class="card-name">Last 14 Days</div>
+                <div class="pill">${weekPct}% week</div>
+              </div>
+              <div style="display:grid; grid-template-columns: repeat(7, minmax(0,1fr)); gap:8px;">
+                ${last14.map(d=>{
+                  const dk = key(d);
+                  const checked = done(h, dk) ? 'checked' : '';
+                  return `
+                    <label style="display:flex; flex-direction:column; gap:6px; align-items:center; padding:8px; border:1px solid var(--border); border-radius:12px; background:#0f1320;">
+                      <div style="font-weight:900; font-size:.78rem; color:var(--muted)">${d.getMonth()+1}/${d.getDate()}</div>
+                      <input type="checkbox" data-habit-id="${h.id}" data-date="${dk}" ${checked} aria-label="${esc(h.name)} ${dk}">
+                    </label>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:12px; min-height:0;">
+            <div class="coach">
+              <div class="coach-head">
+                <h3 class="coach-title">Coach</h3>
+                <span class="pill">Single-habit</span>
+              </div>
+              <div class="coach-box">
+                <div style="font-weight:900">
+                  ${since >= 3 ? `This habit is sliding (${since === Infinity ? 'never done' : since + ' days since last'}).` : `This habit is stable. Keep the loop tight.`}
+                </div>
+                <ul>
+                  <li>Minimum viable version: reduce it until you can’t fail.</li>
+                  <li>Lock a trigger: attach it to a fixed daily event.</li>
+                  <li>Don’t “make up” misses. Just restart today.</li>
+                </ul>
               </div>
             </div>
 
             <div class="list" style="min-height:0;">
-              <h3>Month Snapshot</h3>
-              <div class="items" id="ovrSnapshot"></div>
+              <h3>Quick Actions</h3>
+              <div class="items">
+                <div class="item">
+                  <div>
+                    <div style="font-weight:900">Mark today complete</div>
+                    <small>${key(new Date())}</small>
+                  </div>
+                  <button class="btn primary" type="button" data-mark-today="${h.id}">Done</button>
+                </div>
+                <div class="item">
+                  <div>
+                    <div style="font-weight:900">Export habit history</div>
+                    <small>JSON only</small>
+                  </div>
+                  <button class="btn" type="button" data-export-habit="${h.id}">Export</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       `;
 
-      // snapshot list
-      const md = monthDaysForOffset(appState.ui.monthOffset);
-      const daysInMonth = md.length;
-
-      const snap = wrap.querySelector('#ovrSnapshot');
-      const habits = sortHabits(appState.habits);
-      if(!habits.length){
-        snap.innerHTML = `<div class="empty">Add habits to earn ranks.</div>`;
-      } else {
-        habits.forEach(h=>{
-          const monthDone = countInRange(h, md);
-          const pct = Math.round((monthDone/daysInMonth)*100);
-          const since = lastDoneDaysAgo(h);
-          const b = neglectedBadge(since);
-          const row = document.createElement('div');
-          row.className='item';
-          row.innerHTML = `
-            <div>
-              <div style="font-weight:900">${esc(h.name)}</div>
-              <small>${esc(h.category.toUpperCase())} • ${pct}% this month</small>
-            </div>
-            <div class="badge ${b.cls}">${b.label}</div>
-          `;
-          snap.appendChild(row);
-        });
-      }
-
-      return wrap;
+      return container;
     }
 
     function bindDynamic(root){
-      // checkbox toggles
       root.querySelectorAll('input[type="checkbox"]').forEach(box=>{
         box.addEventListener('change', (e)=>{
           const { habitId, date } = e.target.dataset;
-          const checked = e.target.checked;
-          toggle(habitId, date, checked);
-        });
-      });
-
-      // habit cell click -> edit
-      root.querySelectorAll('[data-edit-habit]').forEach(el=>{
-        el.addEventListener('click', ()=>{
-          openEditModal(el.getAttribute('data-edit-habit'), el);
-        });
-        el.addEventListener('keydown', (e)=>{
-          if(e.key === 'Enter' || e.key === ' '){
-            e.preventDefault();
-            openEditModal(el.getAttribute('data-edit-habit'), el);
-          }
+          toggle(habitId, date, e.target.checked);
         });
       });
     }
 
     // ========= Controls =========
     function bindControls(){
-      // top tabs
-      document.querySelectorAll('.tab[data-tab]').forEach(btn=>{
+      document.querySelectorAll('.tab').forEach(btn=>{
         btn.addEventListener('click', ()=>{
-          update(s=>{ s.ui.tab = btn.dataset.tab; });
+          activeView = btn.dataset.view;
+          document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+          btn.classList.add('active');
+          render();
         });
       });
 
-      // view switcher (weekly/monthly)
-      document.querySelectorAll('.tab[data-view]').forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-          update(s=>{
-            s.ui.activeView = btn.dataset.view;
-            // keep offsets as-is
+      document.getElementById('addHabitBtn').addEventListener('click', ()=>{
+        const name = prompt('Habit name:');
+        if(!name || !name.trim()) return;
+        update((s)=>{
+          s.habits.push({
+            id: crypto.randomUUID(),
+            name: name.trim(),
+            created: new Date().toISOString(),
+            completions: []
           });
         });
       });
 
-      // add habit (opens modal)
-      document.getElementById('addHabitBtn').addEventListener('click', ()=>{
-        openAddModal(document.getElementById('addHabitBtn'));
-      });
-
-      // export full state
       document.getElementById('exportBtn').addEventListener('click', ()=>{
         const blob = new Blob([JSON.stringify(appState, null, 2)], { type:'application/json' });
         const url = URL.createObjectURL(blob);
@@ -1604,7 +1244,6 @@
         URL.revokeObjectURL(url);
       });
 
-      // reset
       document.getElementById('resetBtn').addEventListener('click', ()=>{
         const ok = confirm('Reset deletes habits + history on this device. Continue?');
         if(!ok) return;
@@ -1612,140 +1251,18 @@
         location.reload();
       });
 
-      // modal wiring
-      document.querySelector('[data-modal-close]').addEventListener('click', closeModal);
-      document.querySelector('[data-modal-cancel]').addEventListener('click', closeModal);
-      document.querySelector('.modal-backdrop').addEventListener('click', closeModal);
-
-      document.getElementById('saveHabitBtn').addEventListener('click', saveModalHabit);
-      document.getElementById('deleteHabitBtn').addEventListener('click', deleteModalHabit);
-
-      // modal inputs -> preview
-      document.getElementById('habitName').addEventListener('input', updatePreview);
-      document.getElementById('habitCat').addEventListener('change', updatePreview);
-      document.getElementById('habitColor').addEventListener('change', updatePreview);
-    }
-
-    // ========= Modal =========
-    function fillColorSelect(selected){
-      const sel = document.getElementById('habitColor');
-      sel.innerHTML = '';
-      COLOR_POOL.forEach(c=>{
-        const opt = document.createElement('option');
-        opt.value = c.value;
-        opt.textContent = c.name;
-        if(c.value === selected) opt.selected = true;
-        sel.appendChild(opt);
+      document.getElementById('askAiBtn').addEventListener('click', ()=>{
+        alert('AI mode requires a small backend to protect the API key. We can add that next.');
       });
     }
 
-    function openAddModal(opener){
-      lastFocus = opener || document.activeElement;
-      modalMode = 'add';
-      modalHabitId = null;
+    // ========= Expand-to-full + Detail =========
+    let lastFocus = null;
 
-      const next = pickNextColor(appState.habits);
-      fillColorSelect(next.value);
-
-      document.getElementById('modalTitle').textContent = 'Add Habit';
-      document.getElementById('modalSub').textContent = 'Name required. Category + color included.';
-      document.getElementById('habitName').value = '';
-      document.getElementById('habitCat').value = 'mind';
-      document.getElementById('deleteHabitBtn').style.display = 'none';
-
-      updatePreview();
-      document.body.setAttribute('data-modal','1');
-      requestAnimationFrame(()=> document.getElementById('habitName').focus());
-    }
-
-    function openEditModal(habitId, opener){
-      lastFocus = opener || document.activeElement;
-      modalMode = 'edit';
-      modalHabitId = habitId;
-
-      const h = appState.habits.find(x=>x.id===habitId);
-      if(!h) return;
-
-      fillColorSelect(h.color);
-
-      document.getElementById('modalTitle').textContent = 'Edit Habit';
-      document.getElementById('modalSub').textContent = 'Update name/category/color or delete.';
-      document.getElementById('habitName').value = h.name;
-      document.getElementById('habitCat').value = h.category;
-      document.getElementById('habitColor').value = h.color;
-
-      document.getElementById('deleteHabitBtn').style.display = 'inline-flex';
-
-      updatePreview();
-      document.body.setAttribute('data-modal','1');
-      requestAnimationFrame(()=> document.getElementById('habitName').focus());
-    }
-
-    function closeModal(){
-      if(!document.body.hasAttribute('data-modal')) return;
-      document.body.removeAttribute('data-modal');
-      const toFocus = lastFocus;
-      lastFocus = null;
-      requestAnimationFrame(()=> toFocus?.focus?.());
-    }
-
-    function updatePreview(){
-      const name = document.getElementById('habitName').value.trim() || 'Habit';
-      const cat = document.getElementById('habitCat').value;
-      const color = document.getElementById('habitColor').value;
-
-      document.getElementById('previewName').textContent = name;
-      document.getElementById('previewCat').textContent = cat.toUpperCase();
-      document.getElementById('previewFill').style.background = color;
-    }
-
-    function saveModalHabit(){
-      const name = document.getElementById('habitName').value.trim();
-      const category = document.getElementById('habitCat').value;
-      const color = document.getElementById('habitColor').value;
-
-      if(!name) return;
-
-      update((s)=>{
-        if(modalMode === 'add'){
-          s.habits.push({
-            id: crypto.randomUUID(),
-            name,
-            category,
-            color,
-            created: new Date().toISOString(),
-            completions: []
-          });
-        } else {
-          const h = s.habits.find(x=>x.id===modalHabitId);
-          if(!h) return;
-          h.name = name;
-          h.category = category;
-          h.color = color;
-        }
-      });
-
-      closeModal();
-    }
-
-    function deleteModalHabit(){
-      if(modalMode !== 'edit' || !modalHabitId) return;
-      const h = appState.habits.find(x=>x.id===modalHabitId);
-      if(!h) return;
-      const ok = confirm(`Delete "${h.name}" and its history?`);
-      if(!ok) return;
-
-      update((s)=>{
-        s.habits = s.habits.filter(x=>x.id!==modalHabitId);
-      });
-
-      closeModal();
-    }
-
-    // ========= Expand-to-full =========
-    function setExpanded(which){
+    function setExpanded(which) {
       lastFocus = document.activeElement;
       document.body.setAttribute('data-expanded', which);
+
       requestAnimationFrame(() => {
         const section = which === 'ops'
           ? document.getElementById('opsSection')
@@ -1754,126 +1271,112 @@
       });
     }
 
-    function clearExpanded(){
+    function clearExpanded() {
+      insightsDetailHabitId = null;
       document.body.removeAttribute('data-expanded');
+
       render();
+
       const toFocus = lastFocus;
       lastFocus = null;
       requestAnimationFrame(() => toFocus?.focus?.());
     }
 
-    // ========= CSV Export (Month) =========
-    function exportMonthCSV(){
-      const md = monthDaysForOffset(appState.ui.monthOffset);
-      const daysInMonth = md.length;
-      const title = monthTitle(appState.ui.monthOffset);
+    function openInsightsDetail(habitId, openerEl){
+      lastFocus = openerEl || document.activeElement;
 
-      const lines = [];
-      lines.push(['Month', title].join(','));
-      lines.push(['Habit','Category','Done','DaysInMonth','Percent','DaysSinceLast','LastDate'].join(','));
+      insightsDetailHabitId = habitId;
+      document.body.setAttribute('data-expanded', 'insights');
+      render();
 
-      const habits = sortHabits(appState.habits);
-      habits.forEach(h=>{
-        const doneCount = countInRange(h, md);
-        const pct = Math.round((doneCount/daysInMonth)*100);
-        const since = lastDoneDaysAgo(h);
-        const last = lastDoneDate(h) || 'Never';
-        lines.push([
-          `"${h.name.replaceAll('"','""')}"`,
-          h.category,
-          doneCount,
-          daysInMonth,
-          pct,
-          since === Infinity ? 'NA' : since,
-          last
-        ].join(','));
+      requestAnimationFrame(() => {
+        document.getElementById('insightsSection')?.querySelector('[data-close]')?.focus?.();
       });
-
-      const blob = new Blob([lines.join('\n')], { type:'text/csv' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `habit-month-${title.replaceAll(' ','_')}.csv`;
-      a.click();
-      URL.revokeObjectURL(url);
     }
 
-    // ========= Global Events =========
-    document.addEventListener('click', (e)=>{
+    function closeInsightsDetail(){
+      insightsDetailHabitId = null;
+      render();
+
+      requestAnimationFrame(() => {
+        const sec = document.getElementById('insightsSection');
+        const target =
+          sec?.querySelector('[data-open-habit]') ||
+          sec?.querySelector('[data-close]');
+        target?.focus?.();
+      });
+    }
+
+    document.addEventListener('click', (e) => {
       // Guard: interactive elements inside openables should not trigger open
-      if (e.target.closest('button.btn, input, label, a, select, textarea')) {
-        // allow normal behavior
-      } else {
-        const open = e.target.closest('[data-open-habit]');
-        if(open){
-          // minimalist: clicking cards/items opens edit modal (not a heavy detail view)
-          openEditModal(open.getAttribute('data-open-habit'), open);
-          return;
-        }
+      if (e.target.closest('button.btn, input, label, a, select, textarea')) return;
+
+      const open = e.target.closest('[data-open-habit]');
+      if(open){
+        openInsightsDetail(open.getAttribute('data-open-habit'), open);
+        return;
       }
 
-      const nav = e.target.closest('[data-nav]');
-      if(nav){
-        const dir = nav.getAttribute('data-nav');
-        update(s=>{
-          if(s.ui.activeView === 'weekly'){
-            if(dir === 'prev') s.ui.weekOffset -= 1;
-            if(dir === 'next') s.ui.weekOffset += 1;
-            if(dir === 'today') s.ui.weekOffset = 0;
-          } else {
-            if(dir === 'prev') s.ui.monthOffset -= 1;
-            if(dir === 'next') s.ui.monthOffset += 1;
-            if(dir === 'today') s.ui.monthOffset = 0;
-          }
-        });
+      const back = e.target.closest('[data-detail-close]');
+      if(back){
+        closeInsightsDetail();
+        return;
+      }
+
+      const mark = e.target.closest('[data-mark-today]');
+      if(mark){
+        const id = mark.getAttribute('data-mark-today');
+        toggle(id, key(new Date()), true);
+        return;
+      }
+
+      const expH = e.target.closest('[data-export-habit]');
+      if(expH){
+        const id = expH.getAttribute('data-export-habit');
+        const h = appState.habits.find(x=>x.id===id);
+        if(!h) return;
+        const blob = new Blob([JSON.stringify(h, null, 2)], { type:'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `habit-${safeFileName(h.name)}-${key(new Date())}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
         return;
       }
 
       const expandBtn = e.target.closest('[data-expand]');
-      if(expandBtn){
-        setExpanded(expandBtn.getAttribute('data-expand'));
+      if (expandBtn) {
+        const which = expandBtn.getAttribute('data-expand');
+        setExpanded(which);
         return;
       }
 
       const closeBtn = e.target.closest('[data-close]');
-      if(closeBtn){
+      if (closeBtn) {
         clearExpanded();
-        return;
-      }
-
-      const monthExport = e.target.closest('[data-export-month]');
-      if(monthExport){
-        exportMonthCSV();
         return;
       }
     });
 
-    document.addEventListener('keydown', (e)=>{
-      // openables (cards/items) on Enter/Space
+    document.addEventListener('keydown', (e) => {
       const openable = e.target?.closest?.('[data-open-habit]');
-      if(openable && (e.key === 'Enter' || e.key === ' ')){
+      if (openable && (e.key === 'Enter' || e.key === ' ')) {
         e.preventDefault();
-        openEditModal(openable.getAttribute('data-open-habit'), openable);
+        openInsightsDetail(openable.getAttribute('data-open-habit'), openable);
         return;
       }
 
-      // close modal
-      if(e.key === 'Escape' && document.body.hasAttribute('data-modal')){
-        closeModal();
-        return;
-      }
-
-      // close expand
-      if(e.key === 'Escape' && document.body.hasAttribute('data-expanded')){
+      if (e.key === 'Escape' && document.body.hasAttribute('data-expanded')) {
+        if (insightsDetailHabitId) {
+          closeInsightsDetail();
+          return;
+        }
         clearExpanded();
-        return;
       }
     });
 
-    // ========= Init =========
     function init(){
-      // populate modal color select (default)
-      fillColorSelect(COLOR_POOL[0].value);
       bindControls();
       render();
     }
